@@ -23,6 +23,7 @@ import {
   ShiftTable,
 } from "../components/Tables";
 import { useSyncExternalStore } from "react";
+import { Calendars } from "../components/Calendars";
 
 export default () => {
   const [search, setSearch] = useState("");
@@ -53,9 +54,9 @@ export default () => {
               <FontAwesomeIcon icon={faHome} />
             </Breadcrumb.Item>
             <Breadcrumb.Item>App</Breadcrumb.Item>
-            <Breadcrumb.Item active>Check In Table</Breadcrumb.Item>
+            <Breadcrumb.Item active>Shifts Table</Breadcrumb.Item>
           </Breadcrumb>
-          <h4>Check-in table</h4>
+          <h4>Shifts Table</h4>
         </div>
         <div className="btn-toolbar mb-2 mb-md-0">
           <ButtonGroup>
@@ -127,9 +128,8 @@ export default () => {
           </Col>
         </Row>
       </div>
-
-      <CheckInLogTable searchTitle={search} size={size} />
       {/* <ShiftTable searchTitle={search} size={size} /> */}
+      <Calendars />
     </>
   );
 };

@@ -23,6 +23,7 @@ import {
   ShiftTable,
 } from "../components/Tables";
 import { useSyncExternalStore } from "react";
+import Calendars from "../components/Calendars";
 
 export default () => {
   const [search, setSearch] = useState("");
@@ -31,7 +32,7 @@ export default () => {
 
   const [size, setSize] = useState(10);
 
-  const pageSizes = [10, 20, 30];
+  const pageSizes = [5, 10, 15];
 
   const onChangeSearchPersonName = (e) => {
     setSearch(e.target.value);
@@ -53,9 +54,9 @@ export default () => {
               <FontAwesomeIcon icon={faHome} />
             </Breadcrumb.Item>
             <Breadcrumb.Item>App</Breadcrumb.Item>
-            <Breadcrumb.Item active>Check In Table</Breadcrumb.Item>
+            <Breadcrumb.Item active>Quản lý ca làm việc</Breadcrumb.Item>
           </Breadcrumb>
-          <h4>Check-in table</h4>
+          <h4>Ca làm việc</h4>
         </div>
         <div className="btn-toolbar mb-2 mb-md-0">
           <ButtonGroup>
@@ -78,7 +79,7 @@ export default () => {
               </InputGroup.Text>
               <Form.Control
                 type="text"
-                placeholder="Search by Name"
+                placeholder="Tìm kiếm theo tên"
                 onChange={onChangeSearchPersonName}
                 value={search}
                 name="search"
@@ -127,9 +128,8 @@ export default () => {
           </Col>
         </Row>
       </div>
-
-      <CheckInLogTable searchTitle={search} size={size} />
-      {/* <ShiftTable searchTitle={search} size={size} /> */}
+      <ShiftTable searchTitle={search} size={size} />
+      {/* <Calendars /> */}
     </>
   );
 };

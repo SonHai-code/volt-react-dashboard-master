@@ -1,11 +1,16 @@
-
 import React, { useState } from "react";
 import moment from "moment-timezone";
 import Datetime from "react-datetime";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
-import { Col, Row, Card, Form, Button, InputGroup } from '@themesberg/react-bootstrap';
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  Col,
+  Row,
+  Card,
+  Form,
+  Button,
+  InputGroup,
+} from "@themesberg/react-bootstrap";
 
 export const GeneralInfoForm = () => {
   const [birthday, setBirthday] = useState("");
@@ -19,13 +24,21 @@ export const GeneralInfoForm = () => {
             <Col md={6} className="mb-3">
               <Form.Group id="firstName">
                 <Form.Label>First Name</Form.Label>
-                <Form.Control required type="text" placeholder="Enter your first name" />
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="Enter your first name"
+                />
               </Form.Group>
             </Col>
             <Col md={6} className="mb-3">
               <Form.Group id="lastName">
                 <Form.Label>Last Name</Form.Label>
-                <Form.Control required type="text" placeholder="Also your last name" />
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="Also your last name"
+                />
               </Form.Group>
             </Col>
           </Row>
@@ -38,16 +51,22 @@ export const GeneralInfoForm = () => {
                   onChange={setBirthday}
                   renderInput={(props, openCalendar) => (
                     <InputGroup>
-                      <InputGroup.Text><FontAwesomeIcon icon={faCalendarAlt} /></InputGroup.Text>
+                      <InputGroup.Text>
+                        <FontAwesomeIcon icon={faCalendarAlt} />
+                      </InputGroup.Text>
                       <Form.Control
                         required
                         type="text"
-                        value={birthday ? moment(birthday).format("MM/DD/YYYY") : ""}
+                        value={
+                          birthday ? moment(birthday).format("MM/DD/YYYY") : ""
+                        }
                         placeholder="mm/dd/yyyy"
                         onFocus={openCalendar}
-                        onChange={() => { }} />
+                        onChange={() => {}}
+                      />
                     </InputGroup>
-                  )} />
+                  )}
+                />
               </Form.Group>
             </Col>
             <Col md={6} className="mb-3">
@@ -65,13 +84,21 @@ export const GeneralInfoForm = () => {
             <Col md={6} className="mb-3">
               <Form.Group id="emal">
                 <Form.Label>Email</Form.Label>
-                <Form.Control required type="email" placeholder="name@company.com" />
+                <Form.Control
+                  required
+                  type="email"
+                  placeholder="name@company.com"
+                />
               </Form.Group>
             </Col>
             <Col md={6} className="mb-3">
               <Form.Group id="phone">
                 <Form.Label>Phone</Form.Label>
-                <Form.Control required type="number" placeholder="+12-345 678 910" />
+                <Form.Control
+                  required
+                  type="number"
+                  placeholder="+12-345 678 910"
+                />
               </Form.Group>
             </Col>
           </Row>
@@ -81,7 +108,11 @@ export const GeneralInfoForm = () => {
             <Col sm={9} className="mb-3">
               <Form.Group id="address">
                 <Form.Label>Address</Form.Label>
-                <Form.Control required type="text" placeholder="Enter your home address" />
+                <Form.Control
+                  required
+                  type="text"
+                  placeholder="Enter your home address"
+                />
               </Form.Group>
             </Col>
             <Col sm={3} className="mb-3">
@@ -165,8 +196,190 @@ export const GeneralInfoForm = () => {
             </Col>
           </Row>
           <div className="mt-3">
-            <Button variant="primary" type="submit">Save All</Button>
+            <Button variant="primary" type="submit">
+              Save All
+            </Button>
           </div>
+        </Form>
+      </Card.Body>
+    </Card>
+  );
+};
+
+export const ShiftInfoForm = () => {
+  const [birthday, setBirthday] = useState("");
+
+  return (
+    <Card border="light" className="bg-white shadow-sm mb-4">
+      <Card.Body>
+        {/* <h5 className="mb-4">Thêm ca làm việc</h5> */}
+        <Form>
+          <Row>
+            <Col md={12} className="mb-3">
+              <Form.Group as={Row} className="mb-3" id="code">
+                <Form.Label sm="2" column>
+                  <span className="text-danger">*</span> Mã
+                </Form.Label>
+                <Col sm="10">
+                  <Form.Control
+                    required
+                    type="text"
+                    placeholder="Nhập mã phiên"
+                  />
+                </Col>
+              </Form.Group>
+            </Col>
+            <Col md={12} className="mb-3">
+              <Form.Group as={Row} className="mb-3" id="code">
+                <Form.Label sm="2" column>
+                  <span className="text-danger">*</span> Tên
+                </Form.Label>
+                <Col sm="10">
+                  <Form.Control
+                    required
+                    type="text"
+                    placeholder="Nhập tên phiên làm việc"
+                  />
+                </Col>
+              </Form.Group>
+            </Col>
+          </Row>
+          {/* <Row className="align-items-center">
+            <Col md={6} className="mb-3">
+              <Form.Group id="birthday">
+                <Form.Label>Birthday</Form.Label>
+                <Datetime
+                  timeFormat={false}
+                  onChange={setBirthday}
+                  renderInput={(props, openCalendar) => (
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <FontAwesomeIcon icon={faCalendarAlt} />
+                      </InputGroup.Text>
+                      <Form.Control
+                        required
+                        type="text"
+                        value={
+                          birthday ? moment(birthday).format("MM/DD/YYYY") : ""
+                        }
+                        placeholder="mm/dd/yyyy"
+                        onFocus={openCalendar}
+                        onChange={() => {}}
+                      />
+                    </InputGroup>
+                  )}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6} className="mb-3">
+              <Form.Group id="gender">
+                <Form.Label>Gender</Form.Label>
+                <Form.Select defaultValue="0">
+                  <option value="0">Gender</option>
+                  <option value="1">Female</option>
+                  <option value="2">Male</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+          </Row> */}
+
+          <Col md={12} className="mb-3">
+            <Form.Group as={Row} className="mb-3" id="code">
+              <Form.Label sm="2" column>
+                <span className="text-danger">*</span> Thời gian
+              </Form.Label>
+              <Col sm="10">
+                <InputGroup>
+                  <Form.Control
+                    aria-label="Example text with button addon"
+                    aria-describedby="basic-addon1"
+                  />
+                  <Button disabled variant="primary" id="btn">
+                    Đến
+                  </Button>
+                  <Form.Control
+                    aria-label="Example text with button addon"
+                    aria-describedby="basic-addon1"
+                    className="px-3"
+                  />
+                </InputGroup>
+              </Col>
+            </Form.Group>
+          </Col>
+
+          <Col md={12} className="mb-3">
+            <Form.Group as={Row} className="mb-3" id="code">
+              <Form.Label sm="2" column>
+                Qua đêm
+              </Form.Label>
+              <Col>
+                <Form.Check type="checkbox" id="isOvernight" className="mt-2" />
+              </Col>
+            </Form.Group>
+          </Col>
+
+          <Col md={10} className="mb-3">
+            <Form.Group as={Row} className="mb-3" id="code">
+              <Form.Label sm="2" column>
+                <span className="text-danger">*</span> Vào trễ
+              </Form.Label>
+              <Col sm="10">
+                <InputGroup>
+                  <Form.Control
+                    aria-label="Example text with button addon"
+                    aria-describedby="basic-addon1"
+                  />
+                  <Button disabled variant="primary" id="btn">
+                    Phút
+                  </Button>
+                </InputGroup>
+              </Col>
+            </Form.Group>
+          </Col>
+
+          <Col md={10} className="mb-3">
+            <Form.Group as={Row} className="mb-3" id="code">
+              <Form.Label sm="2" column>
+                <span className="text-danger">*</span> Về sớm
+              </Form.Label>
+              <Col sm="10">
+                <InputGroup>
+                  <Form.Control
+                    aria-label="Example text with button addon"
+                    aria-describedby="basic-addon1"
+                  />
+                  <Button disabled variant="primary" id="btn">
+                    Phút
+                  </Button>
+                </InputGroup>
+              </Col>
+            </Form.Group>
+          </Col>
+
+          <Col md={10} className="mb-3">
+            <Form.Group as={Row} className="mb-3" id="code">
+              <Form.Label sm="2" column>
+                <span className="text-danger">*</span> Giờ công
+              </Form.Label>
+              <Col sm="10">
+                <InputGroup>
+                  <Form.Control
+                    aria-label="Example text with button addon"
+                    aria-describedby="basic-addon1"
+                  />
+                  <Button disabled variant="primary" id="btn">
+                    Giờ
+                  </Button>
+                </InputGroup>
+              </Col>
+            </Form.Group>
+          </Col>
+
+          {/* <div className="mt-3">
+            <Button variant="primary" type="submit">
+              Lưu lại
+            </Button>
+          </div> */}
         </Form>
       </Card.Body>
     </Card>

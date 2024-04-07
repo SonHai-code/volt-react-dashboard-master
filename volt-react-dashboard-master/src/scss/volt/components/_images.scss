@@ -2,94 +2,149 @@
  * = Images
  */
 .image-xl {
+  height: 20rem;
+  img {
     height: 20rem;
-    img{
-        height: 20rem;
-    }
+  }
 }
 
 .image-lg {
+  height: 12rem;
+  img {
     height: 12rem;
-    img{
-        height: 12rem;
-    }
+  }
 }
 
-.image-md{
+.image-md {
+  height: 5.5rem;
+  img {
     height: 5.5rem;
-    img{
-        height: 5.5rem;
-    }
+  }
 }
 
 .image-sm {
+  height: 3rem;
+  img {
     height: 3rem;
-    img{
-        height: 3rem;
-    }
+  }
 }
 
 .image-xs {
+  height: 1.5rem;
+  img {
     height: 1.5rem;
-    img{
-        height: 1.5rem;
-    }
+  }
 }
 
 .image-small {
+  height: 1rem;
+  img {
     height: 1rem;
-    img{
-        height: 1rem;
-    }
+  }
 }
-
-
 
 .img-thumbnail {
-    border-width: $border-width-md;
-    box-shadow: none;
+  border-width: $border-width-md;
+  box-shadow: none;
 }
 
-.full-image{
-    height:100%;
+.full-image {
+  height: 100%;
 }
 
-.gallery-feed{
-    img{
-        width: 20%;
-        margin-right: .5rem;
-        margin-bottom: .5rem;
-        float: left;
-    }
+.gallery-feed {
+  img {
+    width: 20%;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    float: left;
+  }
 }
 
-.language-flag{
-    width: auto;
-    height: 1rem;
-    margin-right: 0.4rem;
-    position: relative;
-    top: -2px;
+.language-flag {
+  width: auto;
+  height: 1rem;
+  margin-right: 0.4rem;
+  position: relative;
+  top: -2px;
 }
 
-@include media-breakpoint-up(sm){
-    .effect-img-2 {
-        position: absolute;
-        right: 5rem;
-        top: 19%;
-        z-index: 2;
-        margin: 0;
-    }
+@include media-breakpoint-up(sm) {
+  .effect-img-2 {
+    position: absolute;
+    right: 5rem;
+    top: 19%;
+    z-index: 2;
+    margin: 0;
+  }
 
-    .effect-img-1, .effect-img-2 {
-        margin: 0 0 3rem;
-        width: 350px;
-        height: auto;
-    }
+  .effect-img-1,
+  .effect-img-2 {
+    margin: 0 0 3rem;
+    width: 350px;
+    height: auto;
+  }
 }
 
-@include media-breakpoint-down(md){
-    .effect-img-2{
-        right:.425rem;
-        top:0;
-    }
+.img-circle {
+  border-radius: 50%;
+  position: relative;
+  height: 117px;
+  width: 117px;
+  overflow: hidden;
+
+  float: left;
+  margin-right: 10px;
+}
+
+@include media-breakpoint-down(md) {
+  .effect-img-2 {
+    right: 0.425rem;
+    top: 0;
+  }
+}
+
+.img-circle.hor img {
+  position: absolute;
+  left: 50%;
+  width: auto;
+  height: 117px;
+  transform: translateX(-50%);
+}
+
+.img-circle.vert img {
+  position: absolute;
+  top: 50%;
+  width: 117px;
+  height: auto;
+  transform: translateY(-50%);
+}
+
+/* Existing styles for .img-circle and base styles for images are maintained */
+
+/* Responsive Styles for .img-circle */
+@media (max-width: 768px) {
+  /* Target smaller screens (adjust breakpoint as needed) */
+  .img-circle {
+    width: 100%; /* Set width to 100% for smaller screens */
+    height: auto; /* Allow height to adjust proportionally */
+  }
+}
+
+/* Responsive Styles for .effect-img-1 and .effect-img-2 */
+@media (max-width: 768px) {
+  /* Target smaller screens (adjust breakpoint as needed) */
+  .effect-img-1,
+  .effect-img-2 {
+    margin: 0; /* Remove bottom margin for smaller screens */
+    width: 100%; /* Set width to 100% for smaller screens */
+    height: auto; /* Allow height to adjust proportionally */
+  }
+
+  /* Adjust positioning or use flexbox for desired layout on smaller screens */
+  .effect-img-2 {
+    position: relative; /* Reset absolute positioning for smaller screens */
+    top: auto; /* Remove top positioning */
+    right: auto; /* Remove right positioning */
+  }
 }
