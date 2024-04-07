@@ -1,9 +1,10 @@
+import React from "react";
+
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import { React } from "react";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import listPlugin from "@fullcalendar/list";
 
-const events = [{ title: "Meeting", start: new Date() }];
-// a custom render function
 function renderEventContent(eventInfo) {
   return (
     <>
@@ -13,16 +14,22 @@ function renderEventContent(eventInfo) {
   );
 }
 
+const events = [{ title: "Meeting", start: new Date() }];
+
 export const Calendars = () => {
   return (
     <div>
-      <h1>Demo App</h1>
       <FullCalendar
-        plugins={[dayGridPlugin]}
-        initialView="dayGridMonth"
-        weekends={false}
-        events={events}
         eventContent={renderEventContent}
+        plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
+        weekNumbers
+        locales="vi"
+        events={events}
+        headerToolbar={{
+          left: "prev,next today",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
+        }}
       />
     </div>
   );

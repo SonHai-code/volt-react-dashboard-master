@@ -54,9 +54,9 @@ export default () => {
               <FontAwesomeIcon icon={faHome} />
             </Breadcrumb.Item>
             <Breadcrumb.Item>App</Breadcrumb.Item>
-            <Breadcrumb.Item active>Shifts Table</Breadcrumb.Item>
+            <Breadcrumb.Item active>Quản lý chấm công</Breadcrumb.Item>
           </Breadcrumb>
-          <h4>Shifts Table</h4>
+          <h4>Lịch làm việc</h4>
         </div>
         <div className="btn-toolbar mb-2 mb-md-0">
           <ButtonGroup>

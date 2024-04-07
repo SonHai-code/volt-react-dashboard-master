@@ -4,7 +4,7 @@ export const Routes = {
   DashboardOverview: { path: "/dashboard/overview" },
   Transactions: { path: "/transactions" },
   Shifts: { path: "/shifts" },
-  Calendars: { path: "/maps" },
+  Calendars: { path: "/calendars" },
   Settings: { path: "/settings" },
   Upgrade: { path: "/upgrade" },
   BootstrapTables: { path: "/tables/bootstrap-tables" },
