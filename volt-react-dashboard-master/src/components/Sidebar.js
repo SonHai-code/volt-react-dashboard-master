@@ -20,6 +20,17 @@ import {
   faBriefcase,
   faCalendar,
   faHandPointRight,
+  faBars,
+  faAlignLeft,
+  faAngleDown,
+  faArrowCircleDown,
+  faPlane,
+  faSitemap,
+  faUserCircle,
+  faCameraRetro,
+  faPeopleCarry,
+  faLocationArrow,
+  faSquareFull,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   Nav,
@@ -36,6 +47,8 @@ import { Routes } from "../routes";
 import ThemesbergLogo from "../assets/img/themesberg.svg";
 import ReactHero from "../assets/img/technologies/react-hero-logo.svg";
 import ProfilePicture from "../assets/img/team/profile-picture-3.jpg";
+import { faPlaystation } from "@fortawesome/free-brands-svg-icons";
+import { faSun } from "@fortawesome/free-regular-svg-icons";
 
 export default (props = {}) => {
   const location = useLocation();
@@ -185,13 +198,10 @@ export default (props = {}) => {
                 icon={faChartPie}
               />
 
-              <CollapsableNavItem
-                title="Quản lý chấm công"
-                icon={faHandPointRight}
-              >
+              <CollapsableNavItem title="Quản lý chấm công" onC icon={faBars}>
                 <NavItem
                   title="Quản lý Check In"
-                  icon={faHandHoldingUsd}
+                  icon={faCameraRetro}
                   link={Routes.Transactions.path}
                 />
                 <NavItem
@@ -204,6 +214,57 @@ export default (props = {}) => {
                   title="Lịch làm việc"
                   icon={faCalendar}
                   link={Routes.Calendars.path}
+                />
+                <NavItem
+                  title="Quản lý ngày lễ"
+                  icon={faPlane}
+                  link={Routes.Calendars.path}
+                />
+                <NavItem
+                  title="Đổi ca làm việc"
+                  icon={faArrowCircleDown}
+                  link={Routes.Calendars.path}
+                />
+                <NavItem
+                  title="Nghỉ phép"
+                  icon={faPlaystation}
+                  link={Routes.Calendars.path}
+                />
+              </CollapsableNavItem>
+
+              <CollapsableNavItem title="Quản lý nhân viên" icon={faBars}>
+                <NavItem
+                  title="Cơ cấu tổ chức"
+                  icon={faSitemap}
+                  link={Routes.OrganizeStructures.path}
+                />
+                <NavItem
+                  title="Thông tin nhân viên"
+                  icon={faUserCircle}
+                  link={Routes.GeneralWorkingShifts.path}
+                />
+              </CollapsableNavItem>
+
+              <CollapsableNavItem title="Quản lý danh mục" icon={faBars}>
+                <NavItem
+                  title="Loại ngày nghỉ"
+                  icon={faSun}
+                  link={Routes.Transactions.path}
+                />
+                <NavItem
+                  title="Chức vụ"
+                  icon={faPeopleCarry}
+                  link={Routes.Shifts.path}
+                />
+                <NavItem
+                  title="Chức danh"
+                  icon={faSquareFull}
+                  link={Routes.Shifts.path}
+                />
+                <NavItem
+                  title="Nơi làm việc"
+                  icon={faLocationArrow}
+                  link={Routes.Departments.path}
                 />
               </CollapsableNavItem>
 

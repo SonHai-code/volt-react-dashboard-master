@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleLeft,
@@ -63,6 +63,7 @@ const Signin = () => {
         if (response.data.token) {
           localStorage.setItem("user", JSON.stringify(response.data));
           history.push(Routes.DashboardOverview.path);
+          window.location.reload();
           console.log(localStorage.getItem("user"));
         }
       })
@@ -76,6 +77,7 @@ const Signin = () => {
 
         setValidated(true);
         setMessage(resMessage);
+        history.push(Routes.ServerError.path);
       });
     setValidated(true);
   };
@@ -166,7 +168,11 @@ const Signin = () => {
                           Ghi nhớ
                         </FormCheck.Label>
                       </Form.Check>
-                      <Card.Link className="small text-end">
+                      <Card.Link
+                        as={Link}
+                        to={Routes.ForgotPassword.path}
+                        className="small text-end"
+                      >
                         Quên mật khẩu?
                       </Card.Link>
                     </div>

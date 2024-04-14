@@ -25,39 +25,41 @@ import {
 import NOTIFICATIONS_DATA from "../data/notifications";
 import Profile3 from "../assets/img/team/profile-picture-3.jpg";
 import eventBus from "../common/EventBus";
+
 import AuthService from "../services/auth.service";
 import { useHistory } from "react-router-dom";
 import { Routes } from "../routes";
 
 export default (props) => {
-  let history = useHistory();
-  const [currentUser, setCurrentUser] = useState(undefined);
-  const [username, setUsername] = useState("");
+  // let history = useHistory();
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    setCurrentUser(user);
+  // const [currentUser, setCurrentUser] = useState(undefined);
+  // const [username, setUsername] = useState("");
 
-    if (user) {
-      setCurrentUser(user);
-      setUsername(user.username);
-    }
+  // useEffect(() => {
+  //   const user = JSON.parse(localStorage.getItem("user"));
+  //
 
-    eventBus.on("logout", () => {
-      logOut();
-    });
+  //   if (user) {
+  //     setCurrentUser(user);
+  //     setUsername(user.username);
+  //   }
 
-    return () => {
-      eventBus.remove("logout");
-    };
-  }, []);
+  //   eventBus.on("logout", () => {
+  //     logOut();
+  //   });
 
-  const logOut = () => {
-    AuthService.logout();
-    setCurrentUser(undefined);
-    setUsername("");
-    history.push(Routes.Presentation.path);
-  };
+  //   return () => {
+  //     eventBus.remove("logout");
+  //   };
+  // }, [history]);
+
+  // const logOut = () => {
+  //   AuthService.logout();
+  //   setCurrentUser(undefined);
+  //   setUsername("");
+  //   history.push(Routes.Presentation.path);
+  // };
 
   // useEffect(() => {
   //   const user = JSON.parse(localStorage.getItem("user"));
@@ -165,7 +167,7 @@ export default (props) => {
                     className="user-avatar md-avatar rounded-circle"
                   />
                   <div className="media-body ms-2 text-dark align-items-center d-none d-lg-block">
-                    <span className="mb-0 font-small fw-bold">{username}</span>
+                    <span className="mb-0 font-small fw-bold">SH</span>
                   </div>
                 </div>
               </Dropdown.Toggle>
@@ -188,7 +190,11 @@ export default (props) => {
 
                 <Dropdown.Divider />
 
-                <Dropdown.Item className="fw-bold" as="button" onClick={logOut}>
+                <Dropdown.Item
+                  className="fw-bold"
+                  as="button"
+                  // onClick={logOut}
+                >
                   <FontAwesomeIcon
                     icon={faSignOutAlt}
                     className="text-danger me-2"
@@ -200,6 +206,7 @@ export default (props) => {
           </Nav>
         </div>
       </Container>
+      {/* <AuthVerify logOut={logOut} /> */}
     </Navbar>
   );
 };

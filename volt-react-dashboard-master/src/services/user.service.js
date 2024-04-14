@@ -36,6 +36,10 @@ const deleteUser = (userId) => {
   return axios.delete(API_URL + "users/" + userId);
 };
 
+const getEmployeesByJobTitlePage = (params) => {
+  return axios.get(API_URL + "users/get-users-title/pages", { params });
+};
+
 const UserService = {
   getPublicContent,
   getUserBoard,
@@ -45,6 +49,7 @@ const UserService = {
   getAllUsers,
   updateUser,
   deleteUser,
+  getEmployeesByJobTitlePage,
 };
 
 export default UserService;

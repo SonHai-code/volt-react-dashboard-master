@@ -21,6 +21,8 @@ import {
   TransactionsTable,
   CheckInLogTable,
   ShiftTable,
+  OrganizeStructureTable,
+  GeneralWorkingShiftTable,
 } from "../components/Tables";
 import { useSyncExternalStore } from "react";
 import Calendars from "../components/Calendars";
@@ -54,9 +56,9 @@ export default () => {
               <FontAwesomeIcon icon={faHome} />
             </Breadcrumb.Item>
             <Breadcrumb.Item>App</Breadcrumb.Item>
-            <Breadcrumb.Item active>Quản lý ca làm việc</Breadcrumb.Item>
+            <Breadcrumb.Item active>Tổng hợp công</Breadcrumb.Item>
           </Breadcrumb>
-          <h4>Ca làm việc</h4>
+          <h4>Tổng hợp công</h4>
         </div>
         <div className="btn-toolbar mb-2 mb-md-0">
           <ButtonGroup>
@@ -71,15 +73,60 @@ export default () => {
       </div>
 
       <div className="table-settings mb-4">
-        <Row className="justify-content-between align-items-center">
-          <Col xs={8} md={6} lg={3} xl={4}>
+        <Row className="justify-content-between">
+          <Col xs={2.4} md={2} lg={1} xl={4} sm={0.5}>
+            <Form.Select
+              aria-label="Default select example"
+              aria-labelledby="Chọn năm"
+            >
+              <option disabled>Năm</option>
+              <option value="2024">2024</option>
+              <option value="2023">2023</option>
+              <option value="2022">2022</option>
+            </Form.Select>
+          </Col>
+
+          <Col xs={2.4} md={2} lg={1} xl={4} sm={0.5}>
+            <Form.Select
+              aria-label="Default select example"
+              aria-labelledby="Chọn tháng"
+            >
+              <option disabled>Chọn tháng</option>
+              <option value="1">Tháng 1</option>
+              <option value="2">Tháng 2</option>
+              <option value="3">Tháng 3</option>
+              <option value="4">Tháng 4</option>
+              <option value="5">Tháng 5</option>
+              <option value="6">Tháng 6</option>
+              <option value="7">Tháng 7</option>
+              <option value="8">Tháng 8</option>
+              <option value="9">Tháng 9</option>
+              <option value="10">Tháng 10</option>
+              <option value="11">Tháng 11</option>
+              <option value="12">Tháng 12</option>
+            </Form.Select>
+          </Col>
+
+          <Col xs={2.4} md={2} lg={1} xl={4} sm={0.5}>
+            <Form.Select
+              aria-label="Default select example"
+              aria-labelledby="Chọn tháng"
+            >
+              <option disabled>Chọn phòng ban</option>
+              <option value="1">Phòng ban 1</option>
+              <option value="2">Phòng ban 2</option>
+              <option value="3">Phòng ban 3</option>
+            </Form.Select>
+          </Col>
+
+          <Col xs={2.4} md={2} lg={1} xl={4}>
             <InputGroup>
               <InputGroup.Text>
                 <FontAwesomeIcon icon={faSearch} />
               </InputGroup.Text>
               <Form.Control
                 type="text"
-                placeholder="Tìm kiếm theo tên"
+                placeholder="Tìm kiếm"
                 onChange={onChangeSearchPersonName}
                 value={search}
                 name="search"
@@ -87,7 +134,7 @@ export default () => {
             </InputGroup>
           </Col>
 
-          <Col xs={4} md={2} xl={1} className="ps-md-0 text-end">
+          <Col xs={3.6} md={4} lg={3} xl={1} className="ps-md-0 text-end">
             <Dropdown as={ButtonGroup}>
               <Dropdown.Toggle
                 split
@@ -128,7 +175,8 @@ export default () => {
           </Col>
         </Row>
       </div>
-      <ShiftTable searchTitle={search} size={size} />
+      <p>General Working Shift Structure section</p>
+      <GeneralWorkingShiftTable />
     </>
   );
 };

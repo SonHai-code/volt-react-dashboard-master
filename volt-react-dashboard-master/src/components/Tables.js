@@ -43,6 +43,8 @@ import {
 import { useSyncExternalStore } from "react";
 import { listShiftsPage } from "../services/ShiftService";
 import { ShiftInfoForm } from "./Forms";
+import { listDepartmentsPage } from "../services/DepartmentService";
+import UserService from "../services/user.service";
 
 const ValueChange = ({ value, suffix }) => {
   const valueIcon = value < 0 ? faAngleDown : faAngleUp;
@@ -447,7 +449,7 @@ export const CheckInLogTable = ({ searchTitle, size }) => {
   const [currentData, setCurrentData] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(1);
 
-  // Hanle Pageable
+  // Handle Pageable
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
@@ -481,7 +483,7 @@ export const CheckInLogTable = ({ searchTitle, size }) => {
         setCount(totalPages);
         setTotalItems(totalItems);
 
-        // console.log(res.data);
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -495,16 +497,16 @@ export const CheckInLogTable = ({ searchTitle, size }) => {
     setCurrentIndex(1);
   }, [searchTitle]);
 
-  const refreshList = () => {
-    retrieveDatas();
-    setCurrentData(null);
-    setCurrentIndex(-1);
-  };
+  // const refreshList = () => {
+  //   retrieveDatas();
+  //   setCurrentData(null);
+  //   setCurrentIndex(-1);
+  // };
 
-  const setActiveData = (data, index) => {
-    setCurrentData(data);
-    setCurrentIndex(index);
-  };
+  // const setActiveData = (data, index) => {
+  //   setCurrentData(data);
+  //   setCurrentIndex(index);
+  // };
 
   /*Missing removeAll() function*/
 
@@ -602,11 +604,10 @@ export const CheckInLogTable = ({ searchTitle, size }) => {
       setShowDelete(true);
     };
 
-    const handleDelte = (id) => {
+    const handleDelete = (id) => {
       deleteCheckInLogById(id)
         .then((res) => {
           console.log(res.data);
-          window.location.reload();
         })
         .catch((err) => {
           console.log(err);
@@ -742,7 +743,7 @@ export const CheckInLogTable = ({ searchTitle, size }) => {
                   <Button
                     variant="danger"
                     className="m-1"
-                    onClick={handleDelte(id)}
+                    onClick={handleDelete(id)}
                   >
                     Xóa
                   </Button>
@@ -772,9 +773,9 @@ export const CheckInLogTable = ({ searchTitle, size }) => {
             </tr>
           </thead>
           <tbody>
-            {/* {datas.map((data, index) => {
+            {datas.map((data, index) => {
               return <TableRow key={`checkInLogs-${data.id}`} {...data} />;
-            })} */}
+            })}
             {/* {checkInLogs.map((checkInLog) => {
               return (
                 <TableRow
@@ -851,17 +852,6 @@ export const ShiftTable = ({ searchTitle, size }) => {
 
     const handleShowDelete = () => {
       setShowDelete(true);
-    };
-
-    const handleDelte = (id) => {
-      deleteCheckInLogById(id)
-        .then((res) => {
-          console.log(res.data);
-          window.location.reload();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
     };
 
     return (
@@ -1192,6 +1182,1040 @@ export const ShiftTable = ({ searchTitle, size }) => {
                 />
               );
             })} */}
+          </tbody>
+        </Table>
+        <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
+          <Nav>
+            <Pagination
+              className="mb-2 mb-lg-0"
+              page={page}
+              // onChange={handleChangePages}
+              count={count}
+            >
+              <Pagination.Prev id="prev" onClick={handlePrev}>
+                Previous
+              </Pagination.Prev>
+              {renderPaginationItems()}
+              <Pagination.Next id="next" onClick={handleNext}>
+                Next
+              </Pagination.Next>
+            </Pagination>
+          </Nav>
+          <small className="fw-bold">
+            Showing <b>{size}</b> out of <b>{totalItems}</b> entries
+          </small>
+        </Card.Footer>
+      </Card.Body>
+    </Card>
+  );
+};
+
+export const OrganizeStructureTable = () => {
+  // Datas and Index
+  const [datas, setDatas] = useState([]);
+  const [currentData, setCurrentData] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(1);
+
+  // Hanle Pageable
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+
+  const [show, setShow] = useState(false);
+
+  const handleshow = () => {
+    setShow(true);
+  };
+
+  const TableRow = (props) => {
+    const { image, employeeId, departmentName, name, employeeCode } = props;
+
+    const [showDetail, setshowDetail] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
+
+    const handleShowDetail = () => {
+      setshowDetail(true);
+    };
+
+    const handleShowDelete = () => {
+      setShowDelete(true);
+    };
+
+    return (
+      <tr>
+        <td>
+          <Card.Link as={Link} className="fw-normal">
+            {employeeId}
+          </Card.Link>
+        </td>
+        <td>
+          <span className="fw-normal">{employeeCode}</span>
+        </td>
+        <td>
+          <span className="fw-normal">{name}</span>
+        </td>
+
+        <td>
+          <span className="media d-flex align-items-center">
+            <Image src={image} className="img-circle hor" />
+          </span>
+        </td>
+        <td>
+          <span className="fw-normal">unknown</span>
+        </td>
+        <td>
+          <span className="fw-normal">{departmentName}</span>
+        </td>
+
+        {/* The Action column */}
+        <td>
+          <Dropdown as={ButtonGroup}>
+            <Dropdown.Toggle
+              as={Button}
+              split
+              variant="link"
+              className="text-dark m-0 p-0"
+            >
+              <span className="icon icon-sm">
+                <FontAwesomeIcon icon={faEllipsisH} className="icon-dark" />
+              </span>
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu as={ButtonGroup}>
+              <Dropdown.Item as={Button} onClick={() => handleShowDetail()}>
+                <FontAwesomeIcon icon={faEye} className="me-2" /> View Details
+              </Dropdown.Item>
+              {/* <Modal
+                as={Modal.Dialog}
+                centered
+                show={showDetail}
+                fullscreen={true}
+                onHide={() => setshowDetail(false)}
+              >
+                <Modal.Header>
+                  <Modal.Title className="h6">
+                    Thông tin của nhân viên {personName ? personName : "Noname"}{" "}
+                    với ID: {id}
+                  </Modal.Title>
+                  <Button
+                    variant="close"
+                    aria-label="Close"
+                    onClick={() => setshowDetail(false)}
+                  />
+                </Modal.Header>
+                <Modal.Body>
+                  <p>Camera ID: {cameraId}</p>
+                  <p>Date: {date}</p>
+                  <p>Id: {id}</p>
+                  <p>
+                    Image
+                    <Image src={image} />
+                  </p>
+                  <p>Inserted Time: {insertedTime}</p>
+                  <p>Mask: {mask === 0 ? "Không" : "Có"}</p>
+                  <p>Message ID: {msgId}</p>
+                  <p>Person ID: {personId}</p>
+                  <p>Person Name: {personName}</p>
+                  <p>Person Type: {personType}</p>
+                  <p>Time: {convertTimeStampToTime(time)}</p>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setshowDetail(false)}
+                  >
+                    OK
+                  </Button>
+                  <Button
+                    variant="link"
+                    className="text-gray ms-auto"
+                    onClick={() => setshowDetail(false)}
+                  >
+                    Đóng
+                  </Button>
+                </Modal.Footer>
+              </Modal> */}
+
+              <Dropdown.Item>
+                <FontAwesomeIcon icon={faEdit} className="me-2" /> Edit
+              </Dropdown.Item>
+
+              <Dropdown.Item
+                className="text-danger"
+                as={Button}
+                onClick={() => handleShowDelete()}
+              >
+                <FontAwesomeIcon icon={faTrashAlt} className="me-2" /> Remove
+              </Dropdown.Item>
+              {/* 
+              <Modal
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+                show={showDelete}
+                onHide={() => setShowDelete(false)}
+              >
+                <Modal.Header onClick={() => setShowDelete(false)}>
+                  <Modal.Title id="contained-modal-title-vcenter">
+                    Cảnh báo
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <p>Bạn có chắc chắn muốn xóa dữ liệu này không ?</p>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button onClick={() => setShowDelete(false)}>Trở lại</Button>
+                  <Button
+                    variant="danger"
+                    className="m-1"
+                    onClick={handleDelte(id)}
+                  >
+                    Xóa
+                  </Button>
+                </Modal.Footer>
+              </Modal> */}
+            </Dropdown.Menu>
+          </Dropdown>
+        </td>
+      </tr>
+    );
+  };
+
+  const getRequestParams = (page) => {
+    let params = {};
+
+    if (page) {
+      params["page"] = page - 1;
+    }
+
+    return params;
+  };
+
+  const retrieveDatas = () => {
+    const params = getRequestParams(page);
+
+    UserService.getEmployeesByJobTitlePage(params)
+      .then((res) => {
+        const { employees, totalPages, totalItems } = res.data;
+
+        setDatas(employees);
+        setCount(totalPages);
+        setTotalItems(totalItems);
+
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(retrieveDatas, [page]);
+
+  const refreshList = () => {
+    retrieveDatas();
+    setCurrentData(null);
+    setCurrentIndex(-1);
+  };
+
+  const setActiveData = (data, index) => {
+    setCurrentData(data);
+    setCurrentIndex(index);
+  };
+
+  /*Missing removeAll() function*/
+
+  const handlePageChange = (numPage) => {
+    setCurrentIndex(numPage);
+
+    setPage(numPage);
+  };
+
+  const renderPaginationItems = () => {
+    let items = [];
+
+    for (let number = 1; number <= count; number++) {
+      items.push(
+        <Pagination.Item
+          key={number}
+          active={number === currentIndex}
+          as="button"
+          onClick={() => handlePageChange(number)}
+        >
+          {number}
+        </Pagination.Item>
+      );
+    }
+    return items;
+  };
+
+  const handlePrev = () => {
+    if (page > 1) {
+      setPage(page - 1);
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (page < count) {
+      setPage(page + 1);
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  // const convertTimestampToDate = (timestamp) => {
+  //   const date = new Date(timestamp * 1000);
+  //   const hours = date.getHours();
+
+  //   const minutes = "0" + date.getMinutes();
+
+  //   const seconds = "0" + date.getSeconds();
+
+  //   // const formattedTime =
+  //   //   hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+
+  //   const formattedTime =
+  //     date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+
+  //   return formattedTime;
+  // };
+
+  // const convertTimeStampToTime = (timestamp) => {
+  //   const date = new Date(timestamp * 1000);
+  //   const hours = date.getHours();
+
+  //   const minutes = "0" + date.getMinutes();
+
+  //   const seconds = "0" + date.getSeconds();
+
+  //   const formattedTime =
+  //     hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+  //   return formattedTime;
+  // };
+
+  return (
+    <Card border="light" className="table-wrapper table-responsive shadow-sm">
+      <Card.Body className="pt-0">
+        <Table hover className="user-table align-items-center">
+          <thead>
+            <tr>
+              <th className="border-bottom">#</th>
+              <th className="border-bottom">Mã Nhân Viên</th>
+              <th className="border-bottom">Tên</th>
+              <th className="border-bottom">Hình ảnh</th>
+              <th className="border-bottom">Ngày bắt đầu làm việc</th>
+              <th className="border-bottom">Phòng Ban</th>
+              <th className="border-bottom">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {datas.map((data, index) => {
+              return <TableRow key={`employee-${data.id}`} {...data} />;
+            })}
+            {/* {checkInLogs.map((checkInLog) => {
+              return (
+                <TableRow
+                  key={`checkInLogs-${checkInLog.id}`}
+                  {...checkInLog}
+                />
+              );
+            })} */}
+          </tbody>
+        </Table>
+        <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
+          <Nav>
+            <Pagination
+              className="mb-2 mb-lg-0"
+              page={page}
+              // onChange={handleChangePages}
+              count={count}
+            >
+              <Pagination.Prev id="prev" onClick={handlePrev}>
+                Previous
+              </Pagination.Prev>
+              {renderPaginationItems()}
+              <Pagination.Next id="next" onClick={handleNext}>
+                Next
+              </Pagination.Next>
+            </Pagination>
+          </Nav>
+        </Card.Footer>
+      </Card.Body>
+    </Card>
+  );
+};
+
+export const GeneralWorkingShiftTable = ({ searchTitle, size }) => {
+  // Datas and Index
+  const [datas, setDatas] = useState([]);
+  const [currentData, setCurrentData] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(1);
+
+  // Hanle Pageable
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+
+  const [show, setShow] = useState(false);
+
+  const handleshow = () => {
+    setShow(true);
+  };
+
+  const TableRow = (props) => {
+    const {
+      id,
+      code,
+      isOvernight,
+      name,
+      day,
+      startedTime,
+      finishedTime,
+      earlyMinutes,
+      lateMinutes,
+      totalWorkedHours,
+    } = props;
+
+    const [showDetail, setshowDetail] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
+
+    const handleShowDetail = () => {
+      setshowDetail(true);
+    };
+
+    const handleShowDelete = () => {
+      setShowDelete(true);
+    };
+
+    return (
+      <tr>
+        <td>
+          <Card.Link as={Link} className="fw-normal">
+            {id}
+          </Card.Link>
+        </td>
+        <td>
+          <span className="fw-normal">{code}</span>
+        </td>
+        <td>
+          <span className="fw-normal">{isOvernight}</span>
+        </td>
+        <td>
+          <span className="fw-normal">{name}</span>
+        </td>
+        <td>
+          <span className="fw-normal">{day}</span>
+        </td>
+        <td>
+          <span className="fw-normal">{startedTime}</span>
+        </td>
+        <td>
+          <span className="fw-normal">{finishedTime}</span>
+        </td>
+        <td>
+          <span className="fw-normal">{earlyMinutes} phút</span>
+        </td>
+        <td>
+          <span className="fw-normal">{lateMinutes} phút</span>
+        </td>
+        <td>
+          <span className="fw-normal">{totalWorkedHours} giờ</span>
+        </td>
+
+        {/* The Action column */}
+        <td>
+          <Dropdown as={ButtonGroup}>
+            <Dropdown.Toggle
+              as={Button}
+              split
+              variant="link"
+              className="text-dark m-0 p-0"
+            >
+              <span className="icon icon-sm">
+                <FontAwesomeIcon icon={faEllipsisH} className="icon-dark" />
+              </span>
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu as={ButtonGroup}>
+              <Dropdown.Item as={Button} onClick={() => handleShowDetail()}>
+                <FontAwesomeIcon icon={faEye} className="me-2" /> View Details
+              </Dropdown.Item>
+              {/* <Modal
+                as={Modal.Dialog}
+                centered
+                show={showDetail}
+                fullscreen={true}
+                onHide={() => setshowDetail(false)}
+              >
+                <Modal.Header>
+                  <Modal.Title className="h6">
+                    Thông tin của nhân viên {personName ? personName : "Noname"}{" "}
+                    với ID: {id}
+                  </Modal.Title>
+                  <Button
+                    variant="close"
+                    aria-label="Close"
+                    onClick={() => setshowDetail(false)}
+                  />
+                </Modal.Header>
+                <Modal.Body>
+                  <p>Camera ID: {cameraId}</p>
+                  <p>Date: {date}</p>
+                  <p>Id: {id}</p>
+                  <p>
+                    Image
+                    <Image src={image} />
+                  </p>
+                  <p>Inserted Time: {insertedTime}</p>
+                  <p>Mask: {mask === 0 ? "Không" : "Có"}</p>
+                  <p>Message ID: {msgId}</p>
+                  <p>Person ID: {personId}</p>
+                  <p>Person Name: {personName}</p>
+                  <p>Person Type: {personType}</p>
+                  <p>Time: {convertTimeStampToTime(time)}</p>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setshowDetail(false)}
+                  >
+                    OK
+                  </Button>
+                  <Button
+                    variant="link"
+                    className="text-gray ms-auto"
+                    onClick={() => setshowDetail(false)}
+                  >
+                    Đóng
+                  </Button>
+                </Modal.Footer>
+              </Modal> */}
+
+              <Dropdown.Item>
+                <FontAwesomeIcon icon={faEdit} className="me-2" /> Edit
+              </Dropdown.Item>
+
+              <Dropdown.Item
+                className="text-danger"
+                as={Button}
+                onClick={() => handleShowDelete()}
+              >
+                <FontAwesomeIcon icon={faTrashAlt} className="me-2" /> Remove
+              </Dropdown.Item>
+              {/* 
+              <Modal
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+                show={showDelete}
+                onHide={() => setShowDelete(false)}
+              >
+                <Modal.Header onClick={() => setShowDelete(false)}>
+                  <Modal.Title id="contained-modal-title-vcenter">
+                    Cảnh báo
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <p>Bạn có chắc chắn muốn xóa dữ liệu này không ?</p>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button onClick={() => setShowDelete(false)}>Trở lại</Button>
+                  <Button
+                    variant="danger"
+                    className="m-1"
+                    onClick={handleDelte(id)}
+                  >
+                    Xóa
+                  </Button>
+                </Modal.Footer>
+              </Modal> */}
+            </Dropdown.Menu>
+          </Dropdown>
+        </td>
+      </tr>
+    );
+  };
+
+  const getRequestParams = (searchTitle, page, pageSize) => {
+    let params = {};
+
+    if (searchTitle) {
+      params["name"] = searchTitle;
+    }
+
+    if (page) {
+      params["page"] = page - 1;
+    }
+
+    if (pageSize) {
+      params["size"] = pageSize;
+    }
+    return params;
+  };
+
+  const retrieveDatas = () => {
+    const params = getRequestParams(searchTitle, page, size);
+
+    listShiftsPage(params)
+      .then((res) => {
+        const { shifts, totalPages, totalItems } = res.data;
+
+        setDatas(shifts);
+        setCount(totalPages);
+        setTotalItems(totalItems);
+
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // useEffect(retrieveDatas, [page, size, searchTitle]);
+
+  useEffect(() => {
+    setPage(1);
+    setCurrentIndex(1);
+  }, [searchTitle]);
+
+  const refreshList = () => {
+    retrieveDatas();
+    setCurrentData(null);
+    setCurrentIndex(-1);
+  };
+
+  const setActiveData = (data, index) => {
+    setCurrentData(data);
+    setCurrentIndex(index);
+  };
+
+  /*Missing removeAll() function*/
+
+  const handlePageChange = (numPage) => {
+    setCurrentIndex(numPage);
+
+    setPage(numPage);
+  };
+
+  const renderPaginationItems = () => {
+    let items = [];
+
+    for (let number = 1; number <= count; number++) {
+      items.push(
+        <Pagination.Item
+          key={number}
+          active={number === currentIndex}
+          as="button"
+          onClick={() => handlePageChange(number)}
+        >
+          {number}
+        </Pagination.Item>
+      );
+    }
+    return items;
+  };
+
+  const handlePrev = () => {
+    if (page > 1) {
+      setPage(page - 1);
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (page < count) {
+      setPage(page + 1);
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  // const convertTimestampToDate = (timestamp) => {
+  //   const date = new Date(timestamp * 1000);
+  //   const hours = date.getHours();
+
+  //   const minutes = "0" + date.getMinutes();
+
+  //   const seconds = "0" + date.getSeconds();
+
+  //   // const formattedTime =
+  //   //   hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+
+  //   const formattedTime =
+  //     date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+
+  //   return formattedTime;
+  // };
+
+  // const convertTimeStampToTime = (timestamp) => {
+  //   const date = new Date(timestamp * 1000);
+  //   const hours = date.getHours();
+
+  //   const minutes = "0" + date.getMinutes();
+
+  //   const seconds = "0" + date.getSeconds();
+
+  //   const formattedTime =
+  //     hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+  //   return formattedTime;
+  // };
+
+  return (
+    <Card border="light" className="table-wrapper table-responsive shadow-sm">
+      <Card.Body className="pt-0">
+        <Table hover className="user-table align-items-center">
+          <thead>
+            <tr>
+              <th className="border-bottom">#</th>
+              <th className="border-bottom">Mã Nhân Viên</th>
+              <th className="border-bottom">Hình ảnh</th>
+              <th className="border-bottom">Họ và tên</th>
+              <th className="border-bottom">Phòng ban</th>
+              <th className="border-bottom">Tổng giờ công</th>
+              <th className="border-bottom">Số lần đi trễ</th>
+              <th className="border-bottom">Số lần về sớm</th>
+              <th className="border-bottom">Không chấm công</th>
+              <th className="border-bottom">Nghỉ phép</th>
+              <th className="border-bottom">Nghỉ không lương</th>
+              <th className="border-bottom">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {datas.map((data, index) => {
+              return <TableRow key={`checkInLogs-${data.id}`} {...data} />;
+            })}
+            {/* {checkInLogs.map((checkInLog) => {
+              return (
+                <TableRow
+                  key={`checkInLogs-${checkInLog.id}`}
+                  {...checkInLog}
+                />
+              );
+            })} */}
+          </tbody>
+        </Table>
+        <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
+          <Nav>
+            <Pagination
+              className="mb-2 mb-lg-0"
+              page={page}
+              // onChange={handleChangePages}
+              count={count}
+            >
+              <Pagination.Prev id="prev" onClick={handlePrev}>
+                Previous
+              </Pagination.Prev>
+              {renderPaginationItems()}
+              <Pagination.Next id="next" onClick={handleNext}>
+                Next
+              </Pagination.Next>
+            </Pagination>
+          </Nav>
+          <small className="fw-bold">
+            Showing <b>{size}</b> out of <b>{totalItems}</b> entries
+          </small>
+        </Card.Footer>
+      </Card.Body>
+    </Card>
+  );
+};
+
+export const DepartmentTable = ({ searchTitle, size }) => {
+  // Datas and Index
+  const [datas, setDatas] = useState([]);
+  const [currentData, setCurrentData] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(1);
+
+  // Hanle Pageable
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+
+  const [show, setShow] = useState(false);
+
+  const handleshow = () => {
+    setShow(true);
+  };
+
+  const TableRow = (props) => {
+    const { id, name, location } = props;
+
+    const [showDetail, setshowDetail] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
+
+    const handleShowDetail = () => {
+      setshowDetail(true);
+    };
+
+    const handleShowDelete = () => {
+      setShowDelete(true);
+    };
+
+    return (
+      <tr>
+        <td>
+          <Card.Link as={Link} className="fw-normal">
+            {id}
+          </Card.Link>
+        </td>
+        <td>
+          <span className="fw-normal">{name}</span>
+        </td>
+        <td>
+          <span className="fw-normal">{location}</span>
+        </td>
+
+        {/* The Action column */}
+        <td>
+          <Dropdown as={ButtonGroup}>
+            <Dropdown.Toggle
+              as={Button}
+              split
+              variant="link"
+              className="text-dark m-0 p-0"
+            >
+              <span className="icon icon-sm">
+                <FontAwesomeIcon icon={faEllipsisH} className="icon-dark" />
+              </span>
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu as={ButtonGroup}>
+              <Dropdown.Item as={Button} onClick={() => handleShowDetail()}>
+                <FontAwesomeIcon icon={faEye} className="me-2" /> View Details
+              </Dropdown.Item>
+              {/* <Modal
+                as={Modal.Dialog}
+                centered
+                show={showDetail}
+                fullscreen={true}
+                onHide={() => setshowDetail(false)}
+              >
+                <Modal.Header>
+                  <Modal.Title className="h6">
+                    Thông tin của nhân viên {personName ? personName : "Noname"}{" "}
+                    với ID: {id}
+                  </Modal.Title>
+                  <Button
+                    variant="close"
+                    aria-label="Close"
+                    onClick={() => setshowDetail(false)}
+                  />
+                </Modal.Header>
+                <Modal.Body>
+                  <p>Camera ID: {cameraId}</p>
+                  <p>Date: {date}</p>
+                  <p>Id: {id}</p>
+                  <p>
+                    Image
+                    <Image src={image} />
+                  </p>
+                  <p>Inserted Time: {insertedTime}</p>
+                  <p>Mask: {mask === 0 ? "Không" : "Có"}</p>
+                  <p>Message ID: {msgId}</p>
+                  <p>Person ID: {personId}</p>
+                  <p>Person Name: {personName}</p>
+                  <p>Person Type: {personType}</p>
+                  <p>Time: {convertTimeStampToTime(time)}</p>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setshowDetail(false)}
+                  >
+                    OK
+                  </Button>
+                  <Button
+                    variant="link"
+                    className="text-gray ms-auto"
+                    onClick={() => setshowDetail(false)}
+                  >
+                    Đóng
+                  </Button>
+                </Modal.Footer>
+              </Modal> */}
+
+              <Dropdown.Item>
+                <FontAwesomeIcon icon={faEdit} className="me-2" /> Edit
+              </Dropdown.Item>
+
+              <Dropdown.Item
+                className="text-danger"
+                as={Button}
+                onClick={() => handleShowDelete()}
+              >
+                <FontAwesomeIcon icon={faTrashAlt} className="me-2" /> Remove
+              </Dropdown.Item>
+              {/* 
+              <Modal
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+                show={showDelete}
+                onHide={() => setShowDelete(false)}
+              >
+                <Modal.Header onClick={() => setShowDelete(false)}>
+                  <Modal.Title id="contained-modal-title-vcenter">
+                    Cảnh báo
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <p>Bạn có chắc chắn muốn xóa dữ liệu này không ?</p>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button onClick={() => setShowDelete(false)}>Trở lại</Button>
+                  <Button
+                    variant="danger"
+                    className="m-1"
+                    onClick={handleDelte(id)}
+                  >
+                    Xóa
+                  </Button>
+                </Modal.Footer>
+              </Modal> */}
+            </Dropdown.Menu>
+          </Dropdown>
+        </td>
+      </tr>
+    );
+  };
+
+  const getRequestParams = (searchTitle, page, pageSize) => {
+    let params = {};
+
+    if (searchTitle) {
+      params["name"] = searchTitle;
+    }
+
+    if (page) {
+      params["page"] = page - 1;
+    }
+
+    if (pageSize) {
+      params["size"] = pageSize;
+    }
+    return params;
+  };
+
+  const retrieveDatas = () => {
+    const params = getRequestParams(searchTitle, page, size);
+
+    listDepartmentsPage(params)
+      .then((res) => {
+        const { departments, totalPages, totalItems } = res.data;
+
+        setDatas(departments);
+        setCount(totalPages);
+        setTotalItems(totalItems);
+
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(retrieveDatas, [page, size, searchTitle]);
+
+  useEffect(() => {
+    setPage(1);
+    setCurrentIndex(1);
+  }, [searchTitle]);
+
+  const refreshList = () => {
+    retrieveDatas();
+    setCurrentData(null);
+    setCurrentIndex(-1);
+  };
+
+  const setActiveData = (data, index) => {
+    setCurrentData(data);
+    setCurrentIndex(index);
+  };
+
+  /*Missing removeAll() function*/
+
+  const handlePageChange = (numPage) => {
+    setCurrentIndex(numPage);
+
+    setPage(numPage);
+  };
+
+  const renderPaginationItems = () => {
+    let items = [];
+
+    for (let number = 1; number <= count; number++) {
+      items.push(
+        <Pagination.Item
+          key={number}
+          active={number === currentIndex}
+          as="button"
+          onClick={() => handlePageChange(number)}
+        >
+          {number}
+        </Pagination.Item>
+      );
+    }
+    return items;
+  };
+
+  const handlePrev = () => {
+    if (page > 1) {
+      setPage(page - 1);
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (page < count) {
+      setPage(page + 1);
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  // const convertTimestampToDate = (timestamp) => {
+  //   const date = new Date(timestamp * 1000);
+  //   const hours = date.getHours();
+
+  //   const minutes = "0" + date.getMinutes();
+
+  //   const seconds = "0" + date.getSeconds();
+
+  //   // const formattedTime =
+  //   //   hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+
+  //   const formattedTime =
+  //     date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+
+  //   return formattedTime;
+  // };
+
+  // const convertTimeStampToTime = (timestamp) => {
+  //   const date = new Date(timestamp * 1000);
+  //   const hours = date.getHours();
+
+  //   const minutes = "0" + date.getMinutes();
+
+  //   const seconds = "0" + date.getSeconds();
+
+  //   const formattedTime =
+  //     hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+  //   return formattedTime;
+  // };
+
+  return (
+    <Card border="light" className="table-wrapper table-responsive shadow-sm">
+      <Card.Body className="pt-0">
+        <Table hover className="user-table align-items-center">
+          <thead>
+            <tr>
+              <th className="border-bottom">#</th>
+              <th className="border-bottom">Tên phòng ban</th>
+              <th className="border-bottom">Vị trí</th>
+              <th className="border-bottom">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {datas.map((data, index) => {
+              return <TableRow key={`checkInLogs-${data.id}`} {...data} />;
+            })}
           </tbody>
         </Table>
         <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">

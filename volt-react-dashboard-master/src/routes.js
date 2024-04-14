@@ -5,6 +5,10 @@ export const Routes = {
   Transactions: { path: "/transactions" },
   Shifts: { path: "/shifts" },
   Calendars: { path: "/calendars" },
+  OrganizeStructures: { path: "/organize-structures" },
+  GeneralWorkingShifts: { path: "/general-working-shifts" },
+  Departments: { path: "/departments" },
+
   Settings: { path: "/settings" },
   Upgrade: { path: "/upgrade" },
   BootstrapTables: { path: "/tables/bootstrap-tables" },

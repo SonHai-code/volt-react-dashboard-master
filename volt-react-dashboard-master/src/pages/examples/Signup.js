@@ -45,6 +45,7 @@ const Signup = () => {
       // alert(JSON.stringify(values, null, 2));
       alert(response);
       history.push(Routes.Signin.path);
+      window.location.reload();
     } catch (e) {
       console.log(e);
     }
