@@ -30,7 +30,7 @@ export default () => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const [size, setSize] = useState(10);
+  const [size, setSize] = useState(5);
 
   const pageSizes = [5, 10, 15];
 

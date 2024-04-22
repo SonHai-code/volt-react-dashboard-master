@@ -63,6 +63,10 @@ import Department from "./Department";
 const RouteWithLoader = ({ component: Component, ...rest }) => {
   const [loaded, setLoaded] = useState(false);
 
+  function handleLoaded(value) {
+    setLoaded(value);
+  }
+
   useEffect(() => {
     const timer = setTimeout(() => setLoaded(true), 1000);
     return () => clearTimeout(timer);
@@ -75,7 +79,7 @@ const RouteWithLoader = ({ component: Component, ...rest }) => {
         <>
           {" "}
           <Preloader show={loaded ? false : true} />
-          <Component {...props} />{" "}
+          <Component {...props} changeLoaded={handleLoaded} />{" "}
         </>
       )}
     />

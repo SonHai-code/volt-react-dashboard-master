@@ -262,7 +262,7 @@ export default (props = {}) => {
                   link={Routes.Shifts.path}
                 />
                 <NavItem
-                  title="Nơi làm việc"
+                  title="Các phòng ban"
                   icon={faLocationArrow}
                   link={Routes.Departments.path}
                 />

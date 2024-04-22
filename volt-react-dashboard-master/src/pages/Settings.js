@@ -91,7 +91,7 @@ export default () => {
       <Row>
         <Col xs={12} xl={8}>
           {/* <GeneralInfoForm /> */}
-          <ShiftInfoForm />
+          <GeneralInfoForm />
         </Col>
 
         <Col xs={12} xl={4}>

@@ -17,4 +17,31 @@ export const updateShiftById = (id, shiftObj) =>
 export const deleteShiftById = (id) =>
   axios.delete(REST_API_BASE_URL + "/" + id);
 
+export const createNewShift = (
+  code,
+  isOvernight,
+  name,
+  day,
+  startedTime,
+  finishedTime,
+  clockInEarlyMinutes,
+  clockInLateMinutes,
+  clockOutEarlyMinutes,
+  clockOutLateMinutes,
+  totalWorkedHours
+) =>
+  axios.post(REST_API_BASE_URL, {
+    code,
+    isOvernight,
+    name,
+    day,
+    startedTime,
+    finishedTime,
+    clockInEarlyMinutes,
+    clockInLateMinutes,
+    clockOutEarlyMinutes,
+    clockOutLateMinutes,
+    totalWorkedHours,
+  });
+
 export const deleteAllShifts = () => axios.delete(REST_API_BASE_URL);

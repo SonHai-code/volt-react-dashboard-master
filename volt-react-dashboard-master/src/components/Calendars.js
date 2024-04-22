@@ -8,10 +8,11 @@ import userEvent from "@testing-library/user-event";
 
 function renderEventContent(eventInfo) {
   return (
-    <>
+    <div className="bg-blue text-white p-3 w-100">
       <b>{eventInfo.timeText}</b>
+
       <i>{eventInfo.event.title}</i>
-    </>
+    </div>
   );
 }
 

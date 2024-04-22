@@ -32,6 +32,7 @@ import * as yup from "yup";
 
 const Signup = () => {
   const history = useHistory();
+
   const onSubmit = async (values) => {
     let response;
 
@@ -79,8 +80,8 @@ const Signup = () => {
                 </div>
 
                 <Formik
-                  validationSchema={basicSchema}
                   onSubmit={onSubmit}
+                  validationSchema={basicSchema}
                   initialValues={{
                     username: "",
                     email: "",

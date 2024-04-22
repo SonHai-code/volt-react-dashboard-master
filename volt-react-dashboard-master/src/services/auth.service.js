@@ -10,12 +10,11 @@ const register = (username, email, password) => {
   });
 };
 
-const login = (username, password) => {
-  return axios.post(API_URL + "signin", {
+const login = (username, password) =>
+  axios.post(API_URL + "signin", {
     username,
     password,
   });
-};
 
 const logout = () => {
   localStorage.removeItem("user");

@@ -10,7 +10,11 @@ import {
   Form,
   Button,
   InputGroup,
+  FormControl,
 } from "@themesberg/react-bootstrap";
+import { createNewShift } from "../services/ShiftService";
+import { Field, Formik } from "formik";
+import { shiftSchema } from "../schemas";
 
 export const GeneralInfoForm = () => {
   const [birthday, setBirthday] = useState("");
@@ -19,6 +23,7 @@ export const GeneralInfoForm = () => {
     <Card border="light" className="bg-white shadow-sm mb-4">
       <Card.Body>
         <h5 className="mb-4">General information</h5>
+
         <Form>
           <Row>
             <Col md={6} className="mb-3">
@@ -207,180 +212,468 @@ export const GeneralInfoForm = () => {
 };
 
 export const ShiftInfoForm = () => {
-  const [birthday, setBirthday] = useState("");
+  const [startedTime, setStartedTime] = useState("");
+
+  const [finishedTime, setFinishedTime] = useState("");
+
+  let today = new Date(Date.now());
+
+  /*---Validation Schema Code---*/
+
+  const onSubmit = async (values) => {
+    let response;
+
+    try {
+      console.log(values);
+      response = await createNewShift(
+        values.code,
+        values.isOvernight,
+        values.name,
+        values.day,
+        values.startedTime,
+        values.finishedTime,
+        values.clockInEarlyMinutes,
+        values.clockInLateMinutes,
+        values.clockOutEarlyMinutes,
+        values.clockOutLateMinutes,
+        values.totalWorkedHours
+      );
+      window.location.reload();
+    } catch (e) {
+      console.log(e);
+      console.log(e.data.message);
+    }
+  };
 
   return (
     <Card border="light" className="bg-white shadow-sm mb-4">
       <Card.Body>
         {/* <h5 className="mb-4">Thêm ca làm việc</h5> */}
-        <Form>
-          <Row>
-            <Col md={12} className="mb-3">
-              <Form.Group as={Row} className="mb-3" id="code">
-                <Form.Label sm="2" column>
-                  <span className="text-danger">*</span> Mã
-                </Form.Label>
-                <Col sm="10">
-                  <Form.Control
-                    required
-                    type="text"
-                    placeholder="Nhập mã phiên"
-                  />
-                </Col>
-              </Form.Group>
-            </Col>
-            <Col md={12} className="mb-3">
-              <Form.Group as={Row} className="mb-3" id="code">
-                <Form.Label sm="2" column>
-                  <span className="text-danger">*</span> Tên
-                </Form.Label>
-                <Col sm="10">
-                  <Form.Control
-                    required
-                    type="text"
-                    placeholder="Nhập tên phiên làm việc"
-                  />
-                </Col>
-              </Form.Group>
-            </Col>
-          </Row>
-          {/* <Row className="align-items-center">
-            <Col md={6} className="mb-3">
-              <Form.Group id="birthday">
-                <Form.Label>Birthday</Form.Label>
-                <Datetime
-                  timeFormat={false}
-                  onChange={setBirthday}
-                  renderInput={(props, openCalendar) => (
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <FontAwesomeIcon icon={faCalendarAlt} />
-                      </InputGroup.Text>
+
+        <Formik
+          onSubmit={onSubmit}
+          validationSchema={shiftSchema}
+          initialValues={{
+            code: "",
+            isOvernight: false,
+            name: "",
+            day: today.toISOString().split("T")[0],
+            startedTime: startedTime,
+            finishedTime: finishedTime,
+            clockInEarlyMinutes: 0,
+            clockInLateMinutes: 0,
+            clockOutEarlyMinutes: 0,
+            clockOutLateMinutes: 0,
+            totalWorkedHours: 0,
+          }}
+        >
+          {({
+            handleSubmit,
+            handleChange,
+            handleBlur,
+            values,
+            touched,
+            errors,
+            isSubmitting,
+          }) => (
+            <Form noValidate onSubmit={handleSubmit}>
+              <Row>
+                <Col md={12} className="mb-3">
+                  <Form.Group
+                    as={Row}
+                    className="mb-3"
+                    id="code"
+                    controlId="validationFormikCode"
+                  >
+                    <Form.Label sm="2" column>
+                      <span className="text-danger">*</span> Mã
+                    </Form.Label>
+                    <Col sm="10">
                       <Form.Control
                         required
                         type="text"
-                        value={
-                          birthday ? moment(birthday).format("MM/DD/YYYY") : ""
-                        }
-                        placeholder="mm/dd/yyyy"
-                        onFocus={openCalendar}
-                        onChange={() => {}}
+                        name="code"
+                        value={values.code}
+                        placeholder="Nhập mã phiên"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={!!errors.code}
+                        isValid={touched.code && !errors.code}
                       />
+                      <FormControl.Feedback type="invalid">
+                        {errors.code}
+                      </FormControl.Feedback>
+                      <FormControl.Feedback type="valid">
+                        Hợp lệ.
+                      </FormControl.Feedback>
+                    </Col>
+                  </Form.Group>
+                </Col>
+
+                <Col md={12} className="mb-3">
+                  <Form.Group
+                    as={Row}
+                    className="mb-3"
+                    id="name"
+                    controlId="validationFormikName"
+                  >
+                    <Form.Label sm="2" column>
+                      <span className="text-danger">*</span> Tên
+                    </Form.Label>
+                    <Col sm="10">
+                      <Form.Control
+                        required
+                        type="text"
+                        name="name"
+                        value={values.name}
+                        placeholder="Nhập tên phiên làm việc"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={!!errors.name}
+                        isValid={touched.name && !errors.name}
+                      />
+                      <FormControl.Feedback type="invalid">
+                        {errors.name}
+                      </FormControl.Feedback>
+                      <FormControl.Feedback type="valid">
+                        Hợp lệ.
+                      </FormControl.Feedback>
+                    </Col>
+                  </Form.Group>
+                </Col>
+              </Row>
+              {/* <Row className="align-items-center">
+                  <Col md={6} className="mb-3">
+                    <Form.Group id="birthday">
+                      <Form.Label>Birthday</Form.Label>
+                      <Datetime
+                        timeFormat={false}
+                        onChange={setBirthday}
+                        renderInput={(props, openCalendar) => (
+                          <InputGroup>
+                            <InputGroup.Text>
+                              <FontAwesomeIcon icon={faCalendarAlt} />
+                            </InputGroup.Text>
+                            <Form.Control
+                              required
+                              type="text"
+                              value={
+                                birthday ? moment(birthday).format("MM/DD/YYYY") : ""
+                              }
+                              placeholder="mm/dd/yyyy"
+                              onFocus={openCalendar}
+                              onChange={() => {}}
+                            />
+                          </InputGroup>
+                        )}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={6} className="mb-3">
+                    <Form.Group id="gender">
+                      <Form.Label>Gender</Form.Label>
+                      <Form.Select defaultValue="0">
+                        <option value="0">Gender</option>
+                        <option value="1">Female</option>
+                        <option value="2">Male</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                </Row> */}
+
+              <Col md={12} className="mb-3">
+                <Form.Group
+                  as={Row}
+                  className="mb-3"
+                  id="time"
+                  controlId="validationFormikTime"
+                >
+                  <Form.Label sm="2" column>
+                    <span className="text-danger">*</span> Thời gian
+                  </Form.Label>
+
+                  <Col sm="10">
+                    <InputGroup hasvalidation>
+                      <Field
+                        aria-describedby="inputGroupPrepend"
+                        aria-label="startedTime"
+                        name="startedTime"
+                        value={values.startedTime}
+                        onChange={handleChange}
+                      >
+                        {({ field }) => (
+                          <div>
+                            <Form.Control {...field} />
+                          </div>
+                        )}
+                      </Field>
+
+                      <Button disabled variant="primary" id="inputGroupPrepend">
+                        Đến
+                      </Button>
+
+                      <Field
+                        // aria-describedby="inputGroupPrepend"
+                        className="px-3"
+                        name="finishedTime"
+                        aria-label="finishedTime"
+                        value={values.finishedTime}
+                        onChange={handleChange}
+                      >
+                        {({ field }) => (
+                          <div>
+                            <Form.Control {...field} />
+                          </div>
+                        )}
+                      </Field>
+
+                      {/* {touched.startedTime &&
+                        touched.finishedTime &&
+                        !errors.finishedTime &&
+                        !errors.startedTime && (
+                          <div className="valid-feedback">Hợp lệ.</div>
+                        )}
+
+                      {!!errors.startedTime && (
+                        <div className="invalid-feedback">
+                          {errors.startedTime}
+                        </div>
+                      )}
+
+                      {!!errors.finishedTime && (
+                        <div className="invalid-feedback">
+                          {errors.finishedTime}
+                        </div>
+                      )} */}
                     </InputGroup>
-                  )}
-                />
-              </Form.Group>
-            </Col>
-            <Col md={6} className="mb-3">
-              <Form.Group id="gender">
-                <Form.Label>Gender</Form.Label>
-                <Form.Select defaultValue="0">
-                  <option value="0">Gender</option>
-                  <option value="1">Female</option>
-                  <option value="2">Male</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
-          </Row> */}
-
-          <Col md={12} className="mb-3">
-            <Form.Group as={Row} className="mb-3" id="code">
-              <Form.Label sm="2" column>
-                <span className="text-danger">*</span> Thời gian
-              </Form.Label>
-              <Col sm="10">
-                <InputGroup>
-                  <Form.Control
-                    aria-label="Example text with button addon"
-                    aria-describedby="basic-addon1"
-                  />
-                  <Button disabled variant="primary" id="btn">
-                    Đến
-                  </Button>
-                  <Form.Control
-                    aria-label="Example text with button addon"
-                    aria-describedby="basic-addon1"
-                    className="px-3"
-                  />
-                </InputGroup>
+                  </Col>
+                </Form.Group>
               </Col>
-            </Form.Group>
-          </Col>
 
-          <Col md={12} className="mb-3">
-            <Form.Group as={Row} className="mb-3" id="code">
-              <Form.Label sm="2" column>
-                Qua đêm
-              </Form.Label>
-              <Col>
-                <Form.Check type="checkbox" id="isOvernight" className="mt-2" />
+              <Col md={12} className="mb-3">
+                <Form.Group as={Row} className="mb-3" id="code">
+                  <Form.Label sm="2" column htmlFor="isOvernight">
+                    Qua đêm
+                  </Form.Label>
+                  <Col>
+                    <Form.Check
+                      className="mt-2"
+                      type="checkbox"
+                      id="isOvernight"
+                      name="isOvernight"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.isOvernight}
+                    />
+                  </Col>
+                </Form.Group>
               </Col>
-            </Form.Group>
-          </Col>
 
-          <Col md={10} className="mb-3">
-            <Form.Group as={Row} className="mb-3" id="code">
-              <Form.Label sm="2" column>
-                <span className="text-danger">*</span> Vào trễ
-              </Form.Label>
-              <Col sm="10">
-                <InputGroup>
-                  <Form.Control
-                    aria-label="Example text with button addon"
-                    aria-describedby="basic-addon1"
-                  />
-                  <Button disabled variant="primary" id="btn">
-                    Phút
-                  </Button>
-                </InputGroup>
+              <Col md={10} className="mb-3">
+                <Form.Group
+                  as={Row}
+                  className="mb-3"
+                  controlId="validationFormikClockInEarly"
+                >
+                  <Form.Label sm="2" column>
+                    <span className="text-danger">*</span> Vào sớm
+                  </Form.Label>
+                  <Col sm="10">
+                    <InputGroup>
+                      <Form.Control
+                        required
+                        type="text"
+                        name="clockInEarlyMinutes"
+                        value={values.clockInEarlyMinutes}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        aria-describedby="btn"
+                        isInvalid={!!errors.clockInEarlyMinutes}
+                        isValid={
+                          touched.clockInEarlyMinutes &&
+                          !errors.clockInEarlyMinutes
+                        }
+                      />
+                      <Button disabled variant="primary" id="btn">
+                        Phút
+                      </Button>
+                      <FormControl.Feedback type="invalid">
+                        {errors.clockInEarlyMinutes}
+                      </FormControl.Feedback>
+                      <FormControl.Feedback type="valid">
+                        Hợp lệ.
+                      </FormControl.Feedback>
+                    </InputGroup>
+                  </Col>
+                </Form.Group>
               </Col>
-            </Form.Group>
-          </Col>
 
-          <Col md={10} className="mb-3">
-            <Form.Group as={Row} className="mb-3" id="code">
-              <Form.Label sm="2" column>
-                <span className="text-danger">*</span> Về sớm
-              </Form.Label>
-              <Col sm="10">
-                <InputGroup>
-                  <Form.Control
-                    aria-label="Example text with button addon"
-                    aria-describedby="basic-addon1"
-                  />
-                  <Button disabled variant="primary" id="btn">
-                    Phút
-                  </Button>
-                </InputGroup>
+              <Col md={10} className="mb-3">
+                <Form.Group
+                  as={Row}
+                  className="mb-3"
+                  controlId="validationFormikClockInLate"
+                >
+                  <Form.Label sm="2" column>
+                    <span className="text-danger">*</span> Vào trễ
+                  </Form.Label>
+                  <Col sm="10">
+                    <InputGroup>
+                      <Form.Control
+                        required
+                        type="text"
+                        name="clockInLateMinutes"
+                        value={values.clockInLateMinutes}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        aria-describedby="btn-01"
+                        isInvalid={!!errors.clockInLateMinutes}
+                        isValid={
+                          touched.clockInLateMinutes &&
+                          !errors.clockInLateMinutes
+                        }
+                      />
+                      <Button disabled variant="primary" id="btn-01">
+                        Phút
+                      </Button>
+
+                      <FormControl.Feedback type="invalid">
+                        {errors.clockInLateMinutes}
+                      </FormControl.Feedback>
+
+                      <FormControl.Feedback type="valid">
+                        Hợp lệ.
+                      </FormControl.Feedback>
+                    </InputGroup>
+                  </Col>
+                </Form.Group>
               </Col>
-            </Form.Group>
-          </Col>
 
-          <Col md={10} className="mb-3">
-            <Form.Group as={Row} className="mb-3" id="code">
-              <Form.Label sm="2" column>
-                <span className="text-danger">*</span> Giờ công
-              </Form.Label>
-              <Col sm="10">
-                <InputGroup>
-                  <Form.Control
-                    aria-label="Example text with button addon"
-                    aria-describedby="basic-addon1"
-                  />
-                  <Button disabled variant="primary" id="btn">
-                    Giờ
-                  </Button>
-                </InputGroup>
+              <Col md={10} className="mb-3">
+                <Form.Group
+                  as={Row}
+                  className="mb-3"
+                  controlId="validationFormikClockOutEarly"
+                >
+                  <Form.Label sm="2" column>
+                    <span className="text-danger">*</span> Về sớm
+                  </Form.Label>
+                  <Col sm="10">
+                    <InputGroup>
+                      <Form.Control
+                        required
+                        type="text"
+                        name="clockOutEarlyMinutes"
+                        value={values.clockOutEarlyMinutes}
+                        aria-describedby="btn-02"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={!!errors.clockOutEarlyMinutes}
+                        isValid={
+                          touched.clockOutEarlyMinutes &&
+                          !errors.clockOutEarlyMinutes
+                        }
+                      />
+                      <Button disabled variant="primary" id="btn-02">
+                        Phút
+                      </Button>
+                      <FormControl.Feedback type="invalid">
+                        {errors.clockOutEarlyMinutes}
+                      </FormControl.Feedback>
+
+                      <FormControl.Feedback type="valid">
+                        Hợp lệ.
+                      </FormControl.Feedback>
+                    </InputGroup>
+                  </Col>
+                </Form.Group>
               </Col>
-            </Form.Group>
-          </Col>
 
-          {/* <div className="mt-3">
-            <Button variant="primary" type="submit">
-              Lưu lại
-            </Button>
-          </div> */}
-        </Form>
+              <Col md={10} className="mb-3">
+                <Form.Group
+                  as={Row}
+                  className="mb-3"
+                  id="code"
+                  controlId="validationFormikClockOutLate"
+                >
+                  <Form.Label sm="2" column>
+                    <span className="text-danger">*</span> Về trễ
+                  </Form.Label>
+                  <Col sm="10">
+                    <InputGroup>
+                      <Form.Control
+                        required
+                        type="text"
+                        name="clockOutLateMinutes"
+                        value={values.clockOutLateMinutes}
+                        aria-describedby="btn-03"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={!!errors.clockOutLateMinutes}
+                        isValid={
+                          touched.clockOutLateMinutes &&
+                          !errors.clockOutLateMinutes
+                        }
+                      />
+                      <Button disabled variant="primary" id="btn-03">
+                        Phút
+                      </Button>
+                      <FormControl.Feedback type="invalid">
+                        {errors.clockOutLateMinutes}
+                      </FormControl.Feedback>
+                      <FormControl.Feedback type="valid">
+                        Hợp lệ.
+                      </FormControl.Feedback>
+                    </InputGroup>
+                  </Col>
+                </Form.Group>
+              </Col>
+
+              <Col md={10} className="mb-3">
+                <Form.Group
+                  as={Row}
+                  className="mb-3"
+                  id="totalWorkedHour"
+                  controlId="validationFormikTotalWorkedHours"
+                >
+                  <Form.Label sm="2" column>
+                    <span className="text-danger">*</span> Giờ công
+                  </Form.Label>
+                  <Col sm="10">
+                    <InputGroup>
+                      <Form.Control
+                        required
+                        type="text"
+                        name="totalWorkedHours"
+                        value={values.totalWorkedHours}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        aria-describedby="btn-04"
+                        isInvalid={!!errors.totalWorkedHours}
+                        isValid={
+                          touched.totalWorkedHours && !errors.totalWorkedHours
+                        }
+                      />
+                      <Button disabled variant="primary" id="btn-04">
+                        Giờ
+                      </Button>
+                      <FormControl.Feedback type="invalid">
+                        {errors.totalWorkedHours}
+                      </FormControl.Feedback>
+                      <FormControl.Feedback type="valid">
+                        Hợp lệ.
+                      </FormControl.Feedback>
+                    </InputGroup>
+                  </Col>
+                </Form.Group>
+              </Col>
+
+              <Button variant="primary" type="submit" disabled={isSubmitting}>
+                Lưu lại
+              </Button>
+            </Form>
+          )}
+        </Formik>
       </Card.Body>
     </Card>
   );

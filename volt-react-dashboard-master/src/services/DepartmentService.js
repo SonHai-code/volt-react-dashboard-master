@@ -7,3 +7,7 @@ export const listDepartmentsPage = (params) =>
 
 export const getDepartmentById = (id) =>
   axios.get(REST_API_BASE_URL + "/" + id);
+
+export const getEmployeesDepartment = (id) => {
+  axios.get(REST_API_BASE_URL + "/" + id + "/get-users");
+};
