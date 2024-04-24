@@ -59,6 +59,7 @@ import eventBus from "../common/EventBus";
 import AuthService from "../services/auth.service";
 import useIsLoggedIn, { useAuth } from "../common/useAuth";
 import Department from "./Department";
+import EmployeesDepartment from "./EmployeesDepartment";
 
 const RouteWithLoader = ({ component: Component, ...rest }) => {
   const [loaded, setLoaded] = useState(false);
@@ -236,6 +237,12 @@ export default () => {
           exact
           path={Routes.Departments.path}
           component={Department}
+        />
+
+        <RouteWithSidebar
+          exact
+          path={Routes.EmployeesDepartments.path}
+          component={EmployeesDepartment}
         />
 
         <RouteWithSidebar

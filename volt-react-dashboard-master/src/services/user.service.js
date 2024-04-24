@@ -40,6 +40,10 @@ const getEmployeesByJobTitlePage = (params) => {
   return axios.get(API_URL + "users/get-users-title/pages", { params });
 };
 
+const getEmployeesByDepartmentPage = (id, params) => {
+  return axios.get(API_URL + "users/shift/" + id + "/pages", { params });
+};
+
 const UserService = {
   getPublicContent,
   getUserBoard,
@@ -50,6 +54,7 @@ const UserService = {
   updateUser,
   deleteUser,
   getEmployeesByJobTitlePage,
+  getEmployeesByDepartmentPage,
 };
 
 export default UserService;

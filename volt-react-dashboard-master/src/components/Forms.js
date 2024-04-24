@@ -15,6 +15,7 @@ import {
 import { createNewShift } from "../services/ShiftService";
 import { Field, Formik } from "formik";
 import { shiftSchema } from "../schemas";
+import FormikFieldDTPicker from "./FormikFieldDTPicker";
 
 export const GeneralInfoForm = () => {
   const [birthday, setBirthday] = useState("");
@@ -50,7 +51,7 @@ export const GeneralInfoForm = () => {
           <Row className="align-items-center">
             <Col md={6} className="mb-3">
               <Form.Group id="birthday">
-                <Form.Label>Birthday</Form.Label>
+                <Form.Label>Birthay</Form.Label>
                 <Datetime
                   timeFormat={false}
                   onChange={setBirthday}
@@ -671,6 +672,89 @@ export const ShiftInfoForm = () => {
               <Button variant="primary" type="submit" disabled={isSubmitting}>
                 Lưu lại
               </Button>
+            </Form>
+          )}
+        </Formik>
+      </Card.Body>
+    </Card>
+  );
+};
+
+export const EventCalendarForm = ({ data }) => {
+  const [birthday, setBirthday] = useState("");
+
+  return (
+    <Card border="light" className="bg-white shadow-sm mb-4">
+      <Card.Body>
+        <h5 className="mb-4">Thêm ca làm việc</h5>
+
+        <Formik
+          onSubmit={console.log}
+          initialValues={{
+            shift: "Ca làm việc",
+            startDay: "",
+            finishDay: "",
+          }}
+        >
+          {({ handleSubmit, handleChange, handleBlur, values }) => (
+            <Form onSubmit={handleSubmit}>
+              <Row>
+                <Col md={6} className="mb-3">
+                  <Form.Group id="shift">
+                    <Form.Label>Chọn ca làm việc</Form.Label>
+                    <Form.Select
+                      name="shift"
+                      value={values.shift}
+                      defaultValue="null"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    >
+                      <option value="Ca làm việc">Ca làm việc</option>
+                      {data.map((el) => (
+                        <option value={el.code}>{el.code}</option>
+                      ))}
+                      {/* <option value="VP01">VP01</option>
+                      <option value="VP02">VP02</option>
+                      <option value="VP03">VP03</option>
+                      <option value="VP04">VP04</option>
+                      <option value="VP05">VP05</option>
+                      <option value="VP06">VP06</option> */}
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row className="align-items-center">
+                <Col md={6} className="mb-3">
+                  <Form.Group id="start_day">
+                    <Form.Label>Từ ngày</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <FontAwesomeIcon icon={faCalendarAlt} />
+                      </InputGroup.Text>
+                      <FormikFieldDTPicker name="startDay" />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+
+                <Col md={6} className="mb-3">
+                  <Form.Group id="finish_day">
+                    <Form.Label>Đến Ngày</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <FontAwesomeIcon icon={faCalendarAlt} />
+                      </InputGroup.Text>
+                      <FormikFieldDTPicker name="finishDay" />
+                    </InputGroup>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <div className="mt-3">
+                <Button variant="primary" type="submit">
+                  Thêm
+                </Button>
+              </div>
             </Form>
           )}
         </Formik>

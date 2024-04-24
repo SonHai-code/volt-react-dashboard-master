@@ -26,7 +26,14 @@ import {
   ButtonGroup,
   Modal,
 } from "@themesberg/react-bootstrap";
-import { Link, useHistory } from "react-router-dom";
+import {
+  Link,
+  Route,
+  Router,
+  Switch,
+  useHistory,
+  useParams,
+} from "react-router-dom";
 
 import { Routes } from "../routes";
 import { pageVisits, pageTraffic, pageRanking } from "../data/tables";
@@ -1926,12 +1933,7 @@ export const GeneralWorkingShiftTable = ({ searchTitle, size }) => {
   );
 };
 
-export const DepartmentTable = ({
-  searchTitle,
-  size,
-  handleRender,
-  handleChildData,
-}) => {
+export const DepartmentTable = ({ searchTitle, size }) => {
   const history = useHistory();
 
   // Datas and Index
@@ -1964,26 +1966,20 @@ export const DepartmentTable = ({
       setShowDelete(true);
     };
 
+    // const path = "/" + id;
+
     return (
-      <tr
-        onClick={() => {
-          console.log(`Clicked the ${id} element`);
-          handleRender();
-          handleChildData(name, id);
-          history.replace({
-            pathname: Routes.Departments.path,
-            search: `?id=${id}`,
-          });
-        }}
-      >
+      <tr>
         <td>
           <Card.Link as={Link} className="fw-normal">
             {id}
           </Card.Link>
         </td>
+
         <td>
           <span className="fw-normal">{name}</span>
         </td>
+
         <td>
           <span className="fw-normal">{location}</span>
         </td>
@@ -2003,7 +1999,7 @@ export const DepartmentTable = ({
             </Dropdown.Toggle>
 
             <Dropdown.Menu as={ButtonGroup}>
-              <Dropdown.Item as={Button} onClick={() => handleShowDetail()}>
+              <Dropdown.Item as={Link} to={Routes.Departments.path + "/" + id}>
                 <FontAwesomeIcon icon={faEye} className="me-2" /> View Details
               </Dropdown.Item>
               {/* <Modal
@@ -2238,9 +2234,9 @@ export const DepartmentTable = ({
             </tr>
           </thead>
           <tbody>
-            {datas.map((data, index) => {
-              return <TableRow key={`department-${data.id}`} {...data} />;
-            })}
+            {datas.map((data, index) => (
+              <TableRow key={`department-${data.id}`} {...data} />
+            ))}
           </tbody>
         </Table>
 
@@ -2270,329 +2266,337 @@ export const DepartmentTable = ({
   );
 };
 
-// export const EmployeesDepartmentTable = ({ searchTitle, size }) => {
-//   // Datas and Index
-//   const [datas, setDatas] = useState([]);
-//   const [currentData, setCurrentData] = useState(null);
-//   const [currentIndex, setCurrentIndex] = useState(1);
+export const EmployeesDepartmentTable = ({ searchTitle, size }) => {
+  // Datas and Index
+  const [datas, setDatas] = useState([]);
+  const [currentData, setCurrentData] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(1);
 
-//   // Hanle Pageable
-//   const [page, setPage] = useState(1);
-//   const [count, setCount] = useState(0);
-//   const [totalItems, setTotalItems] = useState(0);
+  let { id } = useParams();
 
-//   const [show, setShow] = useState(false);
+  // Hanle Pageable
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
 
-//   const handleshow = () => {
-//     setShow(true);
-//   };
+  const [show, setShow] = useState(false);
 
-//   const TableRow = (props) => {
-//     const { id, employeeCode, username } = props;
+  const handleshow = () => {
+    setShow(true);
+  };
 
-//     const [showDetail, setshowDetail] = useState(false);
-//     const [showDelete, setShowDelete] = useState(false);
+  const TableRow = (props) => {
+    const { id, employeeCode, username, profileImage } = props;
 
-//     const handleShowDetail = () => {
-//       setshowDetail(true);
-//     };
+    const [showDetail, setshowDetail] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
 
-//     const handleShowDelete = () => {
-//       setShowDelete(true);
-//     };
+    const handleShowDetail = () => {
+      setshowDetail(true);
+    };
 
-//     return (
-//       <tr>
-//         <td>
-//           <Card.Link as={Link} className="fw-normal">
-//             {id}
-//           </Card.Link>
-//         </td>
-//         <td>
-//           <span className="fw-normal">{employeeCode}</span>
-//         </td>
-//         <td>
-//           <span className="fw-normal">{username}</span>
-//         </td>
+    const handleShowDelete = () => {
+      setShowDelete(true);
+    };
 
-//         {/* The Action column */}
-//         <td>
-//           <Dropdown as={ButtonGroup}>
-//             <Dropdown.Toggle
-//               as={Button}
-//               split
-//               variant="link"
-//               className="text-dark m-0 p-0"
-//             >
-//               <span className="icon icon-sm">
-//                 <FontAwesomeIcon icon={faEllipsisH} className="icon-dark" />
-//               </span>
-//             </Dropdown.Toggle>
+    return (
+      <tr>
+        <td>
+          <Card.Link as={Link} className="fw-normal">
+            {id}
+          </Card.Link>
+        </td>
+        <td>
+          <span className="fw-normal">{employeeCode}</span>
+        </td>
+        <td>
+          <span className="fw-normal">{username}</span>
+        </td>
+        <td>
+          <span className="fw-normal">{profileImage}</span>
+        </td>
 
-//             <Dropdown.Menu as={ButtonGroup}>
-//               <Dropdown.Item as={Button} onClick={() => handleShowDetail()}>
-//                 <FontAwesomeIcon icon={faEye} className="me-2" /> View Details
-//               </Dropdown.Item>
-//               {/* <Modal
-//                 as={Modal.Dialog}
-//                 centered
-//                 show={showDetail}
-//                 fullscreen={true}
-//                 onHide={() => setshowDetail(false)}
-//               >
-//                 <Modal.Header>
-//                   <Modal.Title className="h6">
-//                     Thông tin của nhân viên {personName ? personName : "Noname"}{" "}
-//                     với ID: {id}
-//                   </Modal.Title>
-//                   <Button
-//                     variant="close"
-//                     aria-label="Close"
-//                     onClick={() => setshowDetail(false)}
-//                   />
-//                 </Modal.Header>
-//                 <Modal.Body>
-//                   <p>Camera ID: {cameraId}</p>
-//                   <p>Date: {date}</p>
-//                   <p>Id: {id}</p>
-//                   <p>
-//                     Image
-//                     <Image src={image} />
-//                   </p>
-//                   <p>Inserted Time: {insertedTime}</p>
-//                   <p>Mask: {mask === 0 ? "Không" : "Có"}</p>
-//                   <p>Message ID: {msgId}</p>
-//                   <p>Person ID: {personId}</p>
-//                   <p>Person Name: {personName}</p>
-//                   <p>Person Type: {personType}</p>
-//                   <p>Time: {convertTimeStampToTime(time)}</p>
-//                 </Modal.Body>
-//                 <Modal.Footer>
-//                   <Button
-//                     variant="secondary"
-//                     onClick={() => setshowDetail(false)}
-//                   >
-//                     OK
-//                   </Button>
-//                   <Button
-//                     variant="link"
-//                     className="text-gray ms-auto"
-//                     onClick={() => setshowDetail(false)}
-//                   >
-//                     Đóng
-//                   </Button>
-//                 </Modal.Footer>
-//               </Modal> */}
+        {/* The Action column */}
+        <td>
+          <Dropdown as={ButtonGroup}>
+            <Dropdown.Toggle
+              as={Button}
+              split
+              variant="link"
+              className="text-dark m-0 p-0"
+            >
+              <span className="icon icon-sm">
+                <FontAwesomeIcon icon={faEllipsisH} className="icon-dark" />
+              </span>
+            </Dropdown.Toggle>
 
-//               <Dropdown.Item>
-//                 <FontAwesomeIcon icon={faEdit} className="me-2" /> Edit
-//               </Dropdown.Item>
+            <Dropdown.Menu as={ButtonGroup}>
+              <Dropdown.Item as={Button} onClick={() => handleShowDetail()}>
+                <FontAwesomeIcon icon={faEye} className="me-2" /> View Details
+              </Dropdown.Item>
+              {/* <Modal
+                as={Modal.Dialog}
+                centered
+                show={showDetail}
+                fullscreen={true}
+                onHide={() => setshowDetail(false)}
+              >
+                <Modal.Header>
+                  <Modal.Title className="h6">
+                    Thông tin của nhân viên {personName ? personName : "Noname"}{" "}
+                    với ID: {id}
+                  </Modal.Title>
+                  <Button
+                    variant="close"
+                    aria-label="Close"
+                    onClick={() => setshowDetail(false)}
+                  />
+                </Modal.Header>
+                <Modal.Body>
+                  <p>Camera ID: {cameraId}</p>
+                  <p>Date: {date}</p>
+                  <p>Id: {id}</p>
+                  <p>
+                    Image
+                    <Image src={image} />
+                  </p>
+                  <p>Inserted Time: {insertedTime}</p>
+                  <p>Mask: {mask === 0 ? "Không" : "Có"}</p>
+                  <p>Message ID: {msgId}</p>
+                  <p>Person ID: {personId}</p>
+                  <p>Person Name: {personName}</p>
+                  <p>Person Type: {personType}</p>
+                  <p>Time: {convertTimeStampToTime(time)}</p>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setshowDetail(false)}
+                  >
+                    OK
+                  </Button>
+                  <Button
+                    variant="link"
+                    className="text-gray ms-auto"
+                    onClick={() => setshowDetail(false)}
+                  >
+                    Đóng
+                  </Button>
+                </Modal.Footer>
+              </Modal> */}
 
-//               <Dropdown.Item
-//                 className="text-danger"
-//                 as={Button}
-//                 onClick={() => handleShowDelete()}
-//               >
-//                 <FontAwesomeIcon icon={faTrashAlt} className="me-2" /> Remove
-//               </Dropdown.Item>
-//               {/*
-//               <Modal
-//                 size="lg"
-//                 aria-labelledby="contained-modal-title-vcenter"
-//                 centered
-//                 show={showDelete}
-//                 onHide={() => setShowDelete(false)}
-//               >
-//                 <Modal.Header onClick={() => setShowDelete(false)}>
-//                   <Modal.Title id="contained-modal-title-vcenter">
-//                     Cảnh báo
-//                   </Modal.Title>
-//                 </Modal.Header>
-//                 <Modal.Body>
-//                   <p>Bạn có chắc chắn muốn xóa dữ liệu này không ?</p>
-//                 </Modal.Body>
-//                 <Modal.Footer>
-//                   <Button onClick={() => setShowDelete(false)}>Trở lại</Button>
-//                   <Button
-//                     variant="danger"
-//                     className="m-1"
-//                     onClick={handleDelte(id)}
-//                   >
-//                     Xóa
-//                   </Button>
-//                 </Modal.Footer>
-//               </Modal> */}
-//             </Dropdown.Menu>
-//           </Dropdown>
-//         </td>
-//       </tr>
-//     );
-//   };
+              <Dropdown.Item>
+                <FontAwesomeIcon icon={faEdit} className="me-2" /> Edit
+              </Dropdown.Item>
 
-//   const getRequestParams = (searchTitle, page, pageSize) => {
-//     let params = {};
+              <Dropdown.Item
+                className="text-danger"
+                as={Button}
+                onClick={() => handleShowDelete()}
+              >
+                <FontAwesomeIcon icon={faTrashAlt} className="me-2" /> Remove
+              </Dropdown.Item>
+              {/*
+              <Modal
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+                show={showDelete}
+                onHide={() => setShowDelete(false)}
+              >
+                <Modal.Header onClick={() => setShowDelete(false)}>
+                  <Modal.Title id="contained-modal-title-vcenter">
+                    Cảnh báo
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <p>Bạn có chắc chắn muốn xóa dữ liệu này không ?</p>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button onClick={() => setShowDelete(false)}>Trở lại</Button>
+                  <Button
+                    variant="danger"
+                    className="m-1"
+                    onClick={handleDelte(id)}
+                  >
+                    Xóa
+                  </Button>
+                </Modal.Footer>
+              </Modal> */}
+            </Dropdown.Menu>
+          </Dropdown>
+        </td>
+      </tr>
+    );
+  };
 
-//     if (searchTitle) {
-//       params["name"] = searchTitle;
-//     }
+  const getRequestParams = (searchTitle, page, pageSize) => {
+    let params = {};
 
-//     if (page) {
-//       params["page"] = page - 1;
-//     }
+    if (searchTitle) {
+      params["name"] = searchTitle;
+    }
 
-//     if (pageSize) {
-//       params["size"] = pageSize;
-//     }
-//     return params;
-//   };
+    if (page) {
+      params["page"] = page - 1;
+    }
 
-//   const retrieveDatas = () => {
-//     const params = getRequestParams(searchTitle, page, size);
+    if (pageSize) {
+      params["size"] = pageSize;
+    }
+    return params;
+  };
 
-//     listDepartmentsPage(params)
-//       .then((res) => {
-//         const { departments, totalPages, totalItems } = res.data;
+  const retrieveDatas = () => {
+    const params = getRequestParams(searchTitle, page, size);
 
-//         setDatas(departments);
-//         setCount(totalPages);
-//         setTotalItems(totalItems);
+    UserService.getEmployeesByDepartmentPage(id, params)
+      .then((res) => {
+        const { users, totalPages, totalItems } = res.data;
 
-//         console.log(res.data);
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   };
+        setDatas(users);
+        setCount(totalPages);
+        setTotalItems(totalItems);
 
-//   useEffect(retrieveDatas, [page, size, searchTitle]);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
-//   useEffect(() => {
-//     setPage(1);
-//     setCurrentIndex(1);
-//   }, [searchTitle]);
+  useEffect(retrieveDatas, [page, size, searchTitle]);
 
-//   const refreshList = () => {
-//     retrieveDatas();
-//     setCurrentData(null);
-//     setCurrentIndex(-1);
-//   };
+  useEffect(() => {
+    setPage(1);
+    setCurrentIndex(1);
+  }, [searchTitle]);
 
-//   const setActiveData = (data, index) => {
-//     setCurrentData(data);
-//     setCurrentIndex(index);
-//   };
+  const refreshList = () => {
+    retrieveDatas();
+    setCurrentData(null);
+    setCurrentIndex(-1);
+  };
 
-//   /*Missing removeAll() function*/
+  const setActiveData = (data, index) => {
+    setCurrentData(data);
+    setCurrentIndex(index);
+  };
 
-//   const handlePageChange = (numPage) => {
-//     setCurrentIndex(numPage);
+  /*Missing removeAll() function*/
 
-//     setPage(numPage);
-//   };
+  const handlePageChange = (numPage) => {
+    setCurrentIndex(numPage);
 
-//   const renderPaginationItems = () => {
-//     let items = [];
+    setPage(numPage);
+  };
 
-//     for (let number = 1; number <= count; number++) {
-//       items.push(
-//         <Pagination.Item
-//           key={number}
-//           active={number === currentIndex}
-//           as="button"
-//           onClick={() => handlePageChange(number)}
-//         >
-//           {number}
-//         </Pagination.Item>
-//       );
-//     }
-//     return items;
-//   };
+  const renderPaginationItems = () => {
+    let items = [];
 
-//   const handlePrev = () => {
-//     if (page > 1) {
-//       setPage(page - 1);
-//       setCurrentIndex(currentIndex - 1);
-//     }
-//   };
+    for (let number = 1; number <= count; number++) {
+      items.push(
+        <Pagination.Item
+          key={number}
+          active={number === currentIndex}
+          as="button"
+          onClick={() => handlePageChange(number)}
+        >
+          {number}
+        </Pagination.Item>
+      );
+    }
+    return items;
+  };
 
-//   const handleNext = () => {
-//     if (page < count) {
-//       setPage(page + 1);
-//       setCurrentIndex(currentIndex + 1);
-//     }
-//   };
+  const handlePrev = () => {
+    if (page > 1) {
+      setPage(page - 1);
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
 
-//   // const convertTimestampToDate = (timestamp) => {
-//   //   const date = new Date(timestamp * 1000);
-//   //   const hours = date.getHours();
+  const handleNext = () => {
+    if (page < count) {
+      setPage(page + 1);
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
 
-//   //   const minutes = "0" + date.getMinutes();
+  // const convertTimestampToDate = (timestamp) => {
+  //   const date = new Date(timestamp * 1000);
+  //   const hours = date.getHours();
 
-//   //   const seconds = "0" + date.getSeconds();
+  //   const minutes = "0" + date.getMinutes();
 
-//   //   // const formattedTime =
-//   //   //   hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+  //   const seconds = "0" + date.getSeconds();
 
-//   //   const formattedTime =
-//   //     date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+  //   // const formattedTime =
+  //   //   hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
 
-//   //   return formattedTime;
-//   // };
+  //   const formattedTime =
+  //     date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
 
-//   // const convertTimeStampToTime = (timestamp) => {
-//   //   const date = new Date(timestamp * 1000);
-//   //   const hours = date.getHours();
+  //   return formattedTime;
+  // };
 
-//   //   const minutes = "0" + date.getMinutes();
+  // const convertTimeStampToTime = (timestamp) => {
+  //   const date = new Date(timestamp * 1000);
+  //   const hours = date.getHours();
 
-//   //   const seconds = "0" + date.getSeconds();
+  //   const minutes = "0" + date.getMinutes();
 
-//   //   const formattedTime =
-//   //     hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
-//   //   return formattedTime;
-//   // };
+  //   const seconds = "0" + date.getSeconds();
 
-//   return (
-//     <Card border="light" className="table-wrapper table-responsive shadow-sm">
-//       <Card.Body className="pt-0">
-//         <Table hover className="user-table align-items-center">
-//           <thead>
-//             <tr>
-//               <th className="border-bottom">#</th>
-//               <th className="border-bottom">Tên phòng ban</th>
-//               <th className="border-bottom">Vị trí</th>
-//               <th className="border-bottom">Action</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {datas.map((data, index) => {
-//               return <TableRow key={`department-${data.id}`} {...data} />;
-//             })}
-//           </tbody>
-//         </Table>
+  //   const formattedTime =
+  //     hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+  //   return formattedTime;
+  // };
 
-//         <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
-//           <Nav>
-//             <Pagination
-//               className="mb-2 mb-lg-0"
-//               page={page}
-//               // onChange={handleChangePages}
-//               count={count}
-//             >
-//               <Pagination.Prev id="prev" onClick={handlePrev}>
-//                 Previous
-//               </Pagination.Prev>
-//               {renderPaginationItems()}
-//               <Pagination.Next id="next" onClick={handleNext}>
-//                 Next
-//               </Pagination.Next>
-//             </Pagination>
-//           </Nav>
-//           <small className="fw-bold">
-//             Showing <b>{size}</b> out of <b>{totalItems}</b> entries
-//           </small>
-//         </Card.Footer>
-//       </Card.Body>
-//     </Card>
-//   );
-// };
+  return (
+    <Card border="light" className="table-wrapper table-responsive shadow-sm">
+      <Card.Body className="pt-0">
+        <Table hover className="user-table align-items-center">
+          <thead>
+            <tr>
+              <th className="border-bottom">#</th>
+              <th className="border-bottom">Mã nhân viên</th>
+              <th className="border-bottom">Họ tên</th>
+              <th className="border-bottom">Hình ảnh</th>
+              <th className="border-bottom">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {datas.map((data, index) => {
+              return (
+                <TableRow key={`employees-department-${data.id}`} {...data} />
+              );
+            })}
+          </tbody>
+        </Table>
+
+        <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
+          <Nav>
+            <Pagination
+              className="mb-2 mb-lg-0"
+              page={page}
+              // onChange={handleChangePages}
+              count={count}
+            >
+              <Pagination.Prev id="prev" onClick={handlePrev}>
+                Previous
+              </Pagination.Prev>
+              {renderPaginationItems()}
+              <Pagination.Next id="next" onClick={handleNext}>
+                Next
+              </Pagination.Next>
+            </Pagination>
+          </Nav>
+          <small className="fw-bold">
+            Showing <b>{size}</b> out of <b>{totalItems}</b> entries
+          </small>
+        </Card.Footer>
+      </Card.Body>
+    </Card>
+  );
+};

@@ -17,15 +17,8 @@ import {
   Dropdown,
 } from "@themesberg/react-bootstrap";
 
-import {
-  TransactionsTable,
-  CheckInLogTable,
-  ShiftTable,
-  DepartmentTable,
-  EmployeesDepartmentTable,
-} from "../components/Tables";
-
-import { useHistory } from "react-router-dom";
+import { EmployeesDepartmentTable } from "../components/Tables";
+import { Link, Route, Switch, useHistory, useParams } from "react-router-dom";
 import { Routes } from "../routes";
 
 export default () => {
@@ -34,6 +27,8 @@ export default () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [size, setSize] = useState(5);
   const pageSizes = [5, 10, 15];
+
+  const id = useParams();
 
   const onChangeSearchPersonName = (e) => {
     setSearch(e.target.value);
@@ -55,9 +50,16 @@ export default () => {
               <FontAwesomeIcon icon={faHome} />
             </Breadcrumb.Item>
             <Breadcrumb.Item>App</Breadcrumb.Item>
-            <Breadcrumb.Item active>Quản lý các phòng ban</Breadcrumb.Item>
+            <Breadcrumb.Item as={Link} to={Routes.Departments.path}>
+              Quản lý các phòng ban
+            </Breadcrumb.Item>
+
+            <Breadcrumb.Item active>
+              Quản lý nhân viên phòng ban
+            </Breadcrumb.Item>
           </Breadcrumb>
-          <h4>Quản lý các phòng ban</h4>
+
+          <h4>Quản lý nhân viên phòng ban</h4>
         </div>
         <div className="btn-toolbar mb-2 mb-md-0">
           <ButtonGroup>
@@ -129,8 +131,7 @@ export default () => {
           </Col>
         </Row>
       </div>
-
-      <DepartmentTable searchTitle={search} size={size} />
+      <EmployeesDepartmentTable searchTitle={search} size={size} id={id} />
     </>
   );
 };

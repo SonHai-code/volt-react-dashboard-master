@@ -9,6 +9,8 @@ export const Routes = {
   GeneralWorkingShifts: { path: "/general-working-shifts" },
   Departments: { path: "/departments" },
 
+  EmployeesDepartments: { path: "/departments/:id" },
+
   Settings: { path: "/settings" },
   Upgrade: { path: "/upgrade" },
   BootstrapTables: { path: "/tables/bootstrap-tables" },
