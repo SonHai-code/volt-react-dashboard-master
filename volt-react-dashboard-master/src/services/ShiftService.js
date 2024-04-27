@@ -4,6 +4,9 @@ const REST_API_BASE_URL = "http://localhost:8081/api/shifts";
 
 export const listAllShifts = () => axios.get(REST_API_BASE_URL);
 
+export const listAllShiftCodesDistinct = () =>
+  axios.get(REST_API_BASE_URL + "/get-shift-codes");
+
 export const listShiftsSorted = (params) =>
   axios.get(REST_API_BASE_URL + "/sorted", { params });
 

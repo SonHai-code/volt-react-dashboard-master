@@ -820,6 +820,18 @@ export const CheckInLogTable = ({ searchTitle, size }) => {
 };
 
 export const ShiftTable = ({ searchTitle, size }) => {
+  /** STATES EXPLAINATIONS
+   *
+   * datas - Data APIs
+   * currentIndex - Indicate the current pagination item
+   * page - Current Page
+   * count - Total Pages
+   * totalItems - Total Shifts Datas
+   * pageNumberLimit - How many page numbers would be displayed.
+   * maxPageNumberLimit - Max page bound limit.
+   * minPageNumberLimit- Min page bound limit.
+   */
+
   // Datas and Index
   const [datas, setDatas] = useState([]);
   const [currentData, setCurrentData] = useState(null);
@@ -829,8 +841,11 @@ export const ShiftTable = ({ searchTitle, size }) => {
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
-
   const [show, setShow] = useState(false);
+
+  const [pageNumberLimit, setpageNumberLimit] = useState(5);
+  const [maxPageNumberLimit, setmaxPageNumberLimit] = useState(5);
+  const [minPageNumberLimit, setminPageNumberLimit] = useState(0);
 
   const handleshow = () => {
     setShow(true);
@@ -922,56 +937,6 @@ export const ShiftTable = ({ searchTitle, size }) => {
               <Dropdown.Item as={Button} onClick={() => handleShowDetail()}>
                 <FontAwesomeIcon icon={faEye} className="me-2" /> View Details
               </Dropdown.Item>
-              {/* <Modal
-                as={Modal.Dialog}
-                centered
-                show={showDetail}
-                fullscreen={true}
-                onHide={() => setshowDetail(false)}
-              >
-                <Modal.Header>
-                  <Modal.Title className="h6">
-                    Thông tin của nhân viên {personName ? personName : "Noname"}{" "}
-                    với ID: {id}
-                  </Modal.Title>
-                  <Button
-                    variant="close"
-                    aria-label="Close"
-                    onClick={() => setshowDetail(false)}
-                  />
-                </Modal.Header>
-                <Modal.Body>
-                  <p>Camera ID: {cameraId}</p>
-                  <p>Date: {date}</p>
-                  <p>Id: {id}</p>
-                  <p>
-                    Image
-                    <Image src={image} />
-                  </p>
-                  <p>Inserted Time: {insertedTime}</p>
-                  <p>Mask: {mask === 0 ? "Không" : "Có"}</p>
-                  <p>Message ID: {msgId}</p>
-                  <p>Person ID: {personId}</p>
-                  <p>Person Name: {personName}</p>
-                  <p>Person Type: {personType}</p>
-                  <p>Time: {convertTimeStampToTime(time)}</p>
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button
-                    variant="secondary"
-                    onClick={() => setshowDetail(false)}
-                  >
-                    OK
-                  </Button>
-                  <Button
-                    variant="link"
-                    className="text-gray ms-auto"
-                    onClick={() => setshowDetail(false)}
-                  >
-                    Đóng
-                  </Button>
-                </Modal.Footer>
-              </Modal> */}
 
               <Dropdown.Item>
                 <FontAwesomeIcon icon={faEdit} className="me-2" /> Edit
@@ -984,33 +949,6 @@ export const ShiftTable = ({ searchTitle, size }) => {
               >
                 <FontAwesomeIcon icon={faTrashAlt} className="me-2" /> Remove
               </Dropdown.Item>
-              {/* 
-              <Modal
-                size="lg"
-                aria-labelledby="contained-modal-title-vcenter"
-                centered
-                show={showDelete}
-                onHide={() => setShowDelete(false)}
-              >
-                <Modal.Header onClick={() => setShowDelete(false)}>
-                  <Modal.Title id="contained-modal-title-vcenter">
-                    Cảnh báo
-                  </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <p>Bạn có chắc chắn muốn xóa dữ liệu này không ?</p>
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button onClick={() => setShowDelete(false)}>Trở lại</Button>
-                  <Button
-                    variant="danger"
-                    className="m-1"
-                    onClick={handleDelte(id)}
-                  >
-                    Xóa
-                  </Button>
-                </Modal.Footer>
-              </Modal> */}
             </Dropdown.Menu>
           </Dropdown>
         </td>
@@ -1073,28 +1011,9 @@ export const ShiftTable = ({ searchTitle, size }) => {
 
   /*Missing removeAll() function*/
 
-  const handlePageChange = (numPage) => {
-    setCurrentIndex(numPage);
-
-    setPage(numPage);
-  };
-
-  const renderPaginationItems = () => {
-    let items = [];
-
-    for (let number = 1; number <= count; number++) {
-      items.push(
-        <Pagination.Item
-          key={number}
-          active={number === currentIndex}
-          as="button"
-          onClick={() => handlePageChange(number)}
-        >
-          {number}
-        </Pagination.Item>
-      );
-    }
-    return items;
+  const handlePageChange = (e) => {
+    // setCurrentIndex(numPage);
+    setPage(e.target.id);
   };
 
   const handlePrev = () => {
@@ -1111,35 +1030,29 @@ export const ShiftTable = ({ searchTitle, size }) => {
     }
   };
 
-  // const convertTimestampToDate = (timestamp) => {
-  //   const date = new Date(timestamp * 1000);
-  //   const hours = date.getHours();
+  const renderPaginationItems = () => {
+    let items = [];
 
-  //   const minutes = "0" + date.getMinutes();
-
-  //   const seconds = "0" + date.getSeconds();
-
-  //   // const formattedTime =
-  //   //   hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
-
-  //   const formattedTime =
-  //     date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
-
-  //   return formattedTime;
-  // };
-
-  // const convertTimeStampToTime = (timestamp) => {
-  //   const date = new Date(timestamp * 1000);
-  //   const hours = date.getHours();
-
-  //   const minutes = "0" + date.getMinutes();
-
-  //   const seconds = "0" + date.getSeconds();
-
-  //   const formattedTime =
-  //     hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
-  //   return formattedTime;
-  // };
+    // Render Page Numbers: 1 2 3 4 ....
+    for (let number = 1; number <= count; number++) {
+      if (number < maxPageNumberLimit + 1 && number > minPageNumberLimit) {
+        items.push(
+          <Pagination.Item
+            id={number}
+            key={number}
+            active={number === currentIndex}
+            as="button"
+            onClick={() => handlePageChange(number)}
+          >
+            {number}
+          </Pagination.Item>
+        );
+        return items;
+      } else {
+        return null;
+      }
+    }
+  };
 
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
@@ -1210,7 +1123,9 @@ export const ShiftTable = ({ searchTitle, size }) => {
               <Pagination.Prev id="prev" onClick={handlePrev}>
                 Previous
               </Pagination.Prev>
+
               {renderPaginationItems()}
+
               <Pagination.Next id="next" onClick={handleNext}>
                 Next
               </Pagination.Next>
@@ -1548,6 +1463,7 @@ export const OrganizeStructureTable = () => {
                 Previous
               </Pagination.Prev>
               {renderPaginationItems()}
+
               <Pagination.Next id="next" onClick={handleNext}>
                 Next
               </Pagination.Next>

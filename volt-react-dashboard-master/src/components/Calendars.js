@@ -3,7 +3,6 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
-import { listAllShifts, listShiftsSorted } from "../services/ShiftService";
 import { AddEventsCalendarModal } from "./Modals";
 import { listAllShiftsByDepartmentName } from "../services/DepartmentService";
 
@@ -17,24 +16,26 @@ function renderEventContent(eventInfo) {
   );
 }
 
+// Rendered in Calendars PAGE
 export const Calendars = ({ name }) => {
   const [events, setEvents] = useState([]);
   const [datas, setDatas] = useState([]);
+
   const [modalShow, setModalShow] = useState(false);
 
-  const retrieveDatas = async () => {
-    try {
-      let response = await listAllShiftsByDepartmentName(name);
+  const retrieveDatas = () => {
+    listAllShiftsByDepartmentName(name)
+      .then((response) => {
+        setDatas(response.data);
 
-      setDatas(response.data);
-
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
-  useEffect(retrieveDatas, []);
+  useEffect(retrieveDatas, [name]);
 
   useEffect(() => {
     const eventDatas = datas.map((data) => {
@@ -80,7 +81,7 @@ export const Calendars = ({ name }) => {
       <AddEventsCalendarModal
         show={modalShow}
         onHide={() => setModalShow(false)}
-        data={datas}
+        name={name}
       />
     </>
   );

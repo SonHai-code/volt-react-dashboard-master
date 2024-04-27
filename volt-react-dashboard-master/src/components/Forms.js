@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment-timezone";
 import Datetime from "react-datetime";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,6 +16,7 @@ import { createNewShift } from "../services/ShiftService";
 import { Field, Formik } from "formik";
 import { shiftSchema } from "../schemas";
 import FormikFieldDTPicker from "./FormikFieldDTPicker";
+import { addShiftsToDepartment } from "../services/DepartmentService";
 
 export const GeneralInfoForm = () => {
   const [birthday, setBirthday] = useState("");
@@ -680,8 +681,29 @@ export const ShiftInfoForm = () => {
   );
 };
 
-export const EventCalendarForm = ({ data }) => {
-  const [birthday, setBirthday] = useState("");
+export const EventCalendarForm = ({ data, name }) => {
+  // const [data, setData] = useState([]);
+
+  console.log(name);
+
+  const onSubmit = (values) => {
+    const startDayString = moment(values.startDay).format("yyyy-MM-DD");
+    const finishDayString = moment(values.finishDay).format("yyyy-MM-DD");
+
+    try {
+      let response = addShiftsToDepartment(
+        name,
+        values.shift,
+        startDayString,
+        finishDayString
+      );
+      console.log(response);
+      // setData(response);
+      // window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Card border="light" className="bg-white shadow-sm mb-4">
@@ -689,7 +711,7 @@ export const EventCalendarForm = ({ data }) => {
         <h5 className="mb-4">Thêm ca làm việc</h5>
 
         <Formik
-          onSubmit={console.log}
+          onSubmit={onSubmit}
           initialValues={{
             shift: "Ca làm việc",
             startDay: "",
@@ -711,14 +733,8 @@ export const EventCalendarForm = ({ data }) => {
                     >
                       <option value="Ca làm việc">Ca làm việc</option>
                       {data.map((el) => (
-                        <option value={el.code}>{el.code}</option>
+                        <option value={el}>{el}</option>
                       ))}
-                      {/* <option value="VP01">VP01</option>
-                      <option value="VP02">VP02</option>
-                      <option value="VP03">VP03</option>
-                      <option value="VP04">VP04</option>
-                      <option value="VP05">VP05</option>
-                      <option value="VP06">VP06</option> */}
                     </Form.Select>
                   </Form.Group>
                 </Col>

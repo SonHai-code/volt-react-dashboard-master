@@ -4,12 +4,8 @@ import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { Breadcrumb, Col, Form, Row } from "@themesberg/react-bootstrap";
 
 import { Calendars } from "../components/Calendars";
-import { DepartmentTable, ShiftTable } from "../components/Tables";
-import {
-  getDepartmentByName,
-  listDepartmentNames,
-} from "../services/DepartmentService";
-import NotFound from "./examples/NotFound";
+
+import { listDepartmentNames } from "../services/DepartmentService";
 
 export default () => {
   const [data, setData] = useState([]);
@@ -55,7 +51,7 @@ export default () => {
                 defaultValue="null"
                 onChange={(e) => setName(e.target.value)}
               >
-                <option value="Ca làm việc">Chọn phòng ban</option>
+                <option value="">Chọn phòng ban</option>
 
                 {data.map((opt) => (
                   <option value={opt}>{opt}</option>

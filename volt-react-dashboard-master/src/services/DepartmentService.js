@@ -20,3 +20,16 @@ export const getDepartmentByName = (name) =>
 export const getEmployeesDepartment = (id) => {
   axios.get(REST_API_BASE_URL + "/" + id + "/get-users");
 };
+
+export const addShiftsToDepartment = (
+  departmentName,
+  shiftCode,
+  startDay,
+  finishDay
+) =>
+  axios.post(REST_API_BASE_URL + "/add-shifts", {
+    departmentName,
+    shiftCode,
+    startDay,
+    finishDay,
+  });
