@@ -52,6 +52,7 @@ import { listShiftsPage } from "../services/ShiftService";
 import { ShiftInfoForm } from "./Forms";
 import { listDepartmentsPage } from "../services/DepartmentService";
 import UserService from "../services/user.service";
+import { max } from "moment";
 
 const ValueChange = ({ value, suffix }) => {
   const valueIcon = value < 0 ? faAngleDown : faAngleUp;
@@ -835,7 +836,7 @@ export const ShiftTable = ({ searchTitle, size }) => {
   // Datas and Index
   const [datas, setDatas] = useState([]);
   const [currentData, setCurrentData] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(1);
+  // const [currentIndex, setCurrentIndex] = useState(1);
 
   // Hanle Pageable
   const [page, setPage] = useState(1);
@@ -846,6 +847,12 @@ export const ShiftTable = ({ searchTitle, size }) => {
   const [pageNumberLimit, setpageNumberLimit] = useState(5);
   const [maxPageNumberLimit, setmaxPageNumberLimit] = useState(5);
   const [minPageNumberLimit, setminPageNumberLimit] = useState(0);
+
+  // pageList = [1, 2, 3, 4, ...]
+  const pageList = [];
+  for (let i = 1; i <= count; i++) {
+    pageList.push(i);
+  }
 
   const handleshow = () => {
     setShow(true);
@@ -995,64 +1002,68 @@ export const ShiftTable = ({ searchTitle, size }) => {
 
   useEffect(() => {
     setPage(1);
-    setCurrentIndex(1);
   }, [searchTitle]);
 
-  const refreshList = () => {
-    retrieveDatas();
-    setCurrentData(null);
-    setCurrentIndex(-1);
-  };
+  // const refreshList = () => {
+  //   retrieveDatas();
+  //   setCurrentData(null);
 
-  const setActiveData = (data, index) => {
-    setCurrentData(data);
-    setCurrentIndex(index);
-  };
+  // };
 
   /*Missing removeAll() function*/
 
   const handlePageChange = (e) => {
-    // setCurrentIndex(numPage);
     setPage(e.target.id);
   };
 
   const handlePrev = () => {
-    if (page > 1) {
-      setPage(page - 1);
-      setCurrentIndex(currentIndex - 1);
+    setPage(page - 1);
+
+    if ((page - 1) % pageNumberLimit == 0) {
+      setmaxPageNumberLimit(maxPageNumberLimit - pageNumberLimit);
+      setminPageNumberLimit(minPageNumberLimit - pageNumberLimit);
     }
   };
 
   const handleNext = () => {
-    if (page < count) {
-      setPage(page + 1);
-      setCurrentIndex(currentIndex + 1);
+    setPage(page + 1);
+    if (page + 1 > maxPageNumberLimit) {
+      setmaxPageNumberLimit(maxPageNumberLimit + pageNumberLimit);
+      setminPageNumberLimit(minPageNumberLimit + pageNumberLimit);
     }
   };
 
-  const renderPaginationItems = () => {
-    let items = [];
-
-    // Render Page Numbers: 1 2 3 4 ....
-    for (let number = 1; number <= count; number++) {
-      if (number < maxPageNumberLimit + 1 && number > minPageNumberLimit) {
-        items.push(
-          <Pagination.Item
-            id={number}
-            key={number}
-            active={number === currentIndex}
-            as="button"
-            onClick={() => handlePageChange(number)}
-          >
-            {number}
-          </Pagination.Item>
-        );
-        return items;
-      } else {
-        return null;
-      }
+  const renderPaginationItems = pageList.map((number) => {
+    if (number < maxPageNumberLimit + 1 && number > minPageNumberLimit) {
+      return (
+        <Pagination.Item
+          key={number}
+          id={number}
+          onClick={handlePageChange}
+          active={page == number ? "active" : null}
+          as="button"
+        >
+          {number}
+        </Pagination.Item>
+      );
+    } else {
+      return null;
     }
-  };
+  });
+
+  let pageIncrementBtn = null;
+  if (count > maxPageNumberLimit) {
+    pageIncrementBtn = (
+      <Pagination.Item onClick={handleNext}>...</Pagination.Item>
+    );
+  }
+
+  let pageDecrementBtn = null;
+  if (minPageNumberLimit >= 1) {
+    pageDecrementBtn = (
+      <Pagination.Item onClick={handlePrev}>...</Pagination.Item>
+    );
+  }
 
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
@@ -1102,31 +1113,28 @@ export const ShiftTable = ({ searchTitle, size }) => {
             {datas.map((data, index) => {
               return <TableRow key={`checkInLogs-${data.id}`} {...data} />;
             })}
-            {/* {checkInLogs.map((checkInLog) => {
-              return (
-                <TableRow
-                  key={`checkInLogs-${checkInLog.id}`}
-                  {...checkInLog}
-                />
-              );
-            })} */}
           </tbody>
         </Table>
         <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
           <Nav>
-            <Pagination
-              className="mb-2 mb-lg-0"
-              page={page}
-              // onChange={handleChangePages}
-              count={count}
-            >
-              <Pagination.Prev id="prev" onClick={handlePrev}>
+            <Pagination className="mb-2 mb-lg-0" page={page} count={count}>
+              <Pagination.Prev
+                id="prev"
+                onClick={handlePrev}
+                disabled={page == pageList[0] ? true : false}
+              >
                 Previous
               </Pagination.Prev>
 
-              {renderPaginationItems()}
+              {pageDecrementBtn}
+              {renderPaginationItems}
+              {pageIncrementBtn}
 
-              <Pagination.Next id="next" onClick={handleNext}>
+              <Pagination.Next
+                id="next"
+                onClick={handleNext}
+                disabled={page == pageList[count - 1] ? true : false}
+              >
                 Next
               </Pagination.Next>
             </Pagination>
