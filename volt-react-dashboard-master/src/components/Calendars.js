@@ -20,7 +20,6 @@ function renderEventContent(eventInfo) {
 export const Calendars = ({ name }) => {
   const [events, setEvents] = useState([]);
   const [datas, setDatas] = useState([]);
-
   const [modalShow, setModalShow] = useState(false);
 
   const retrieveDatas = () => {
@@ -38,12 +37,16 @@ export const Calendars = ({ name }) => {
   useEffect(retrieveDatas, [name]);
 
   useEffect(() => {
-    const eventDatas = datas.map((data) => {
-      return {
-        title: data.code,
-        start: data.day + "T" + data.startedTime,
-        end: data.day + "T" + data.finishedTime,
-      };
+    const eventDatas = [];
+
+    datas.forEach((data) => {
+      data.dates.forEach((date) => {
+        eventDatas.push({
+          title: data.code,
+          start: date + "T" + data.startedTime,
+          end: date + "T" + data.finishedTime,
+        });
+      });
     });
 
     setEvents(eventDatas);
