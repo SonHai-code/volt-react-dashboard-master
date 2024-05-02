@@ -53,6 +53,7 @@ import { ShiftInfoForm } from "./Forms";
 import { listDepartmentsPage } from "../services/DepartmentService";
 import UserService from "../services/user.service";
 import { max } from "moment";
+import { getOverallWorkingShift } from "../services/WorkService";
 
 const ValueChange = ({ value, suffix }) => {
   const valueIcon = value < 0 ? faAngleDown : faAngleUp;
@@ -1483,7 +1484,13 @@ export const OrganizeStructureTable = () => {
   );
 };
 
-export const GeneralWorkingShiftTable = ({ searchTitle, size }) => {
+export const GeneralWorkingShiftTable = ({
+  year,
+  month,
+  departmentName,
+  searchTitle,
+  size,
+}) => {
   // Datas and Index
   const [datas, setDatas] = useState([]);
   const [currentData, setCurrentData] = useState(null);
@@ -1493,8 +1500,11 @@ export const GeneralWorkingShiftTable = ({ searchTitle, size }) => {
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
-
   const [show, setShow] = useState(false);
+
+  console.log(
+    `departmentName = ${departmentName}, month = ${month}, year = ${year}`
+  );
 
   const handleshow = () => {
     setShow(true);
@@ -1502,16 +1512,14 @@ export const GeneralWorkingShiftTable = ({ searchTitle, size }) => {
 
   const TableRow = (props) => {
     const {
-      id,
-      code,
-      isOvernight,
-      name,
-      day,
-      startedTime,
-      finishedTime,
-      earlyMinutes,
-      lateMinutes,
-      totalWorkedHours,
+      employeeCode,
+      image,
+      username,
+      departmentName,
+      totalTimesWorkHours,
+      totalTimesLateClockIn,
+      totalTimesEarlyClockOut,
+      totalTimesAbsent,
     } = props;
 
     const [showDetail, setshowDetail] = useState(false);
@@ -1529,35 +1537,401 @@ export const GeneralWorkingShiftTable = ({ searchTitle, size }) => {
       <tr>
         <td>
           <Card.Link as={Link} className="fw-normal">
-            {id}
+            {employeeCode}
           </Card.Link>
         </td>
         <td>
-          <span className="fw-normal">{code}</span>
+          <span className="fw-normal">{image}</span>
         </td>
         <td>
-          <span className="fw-normal">{isOvernight}</span>
+          <span className="fw-normal">{username}</span>
         </td>
         <td>
-          <span className="fw-normal">{name}</span>
+          <span className="fw-normal">{departmentName}</span>
         </td>
         <td>
-          <span className="fw-normal">{day}</span>
+          <span className="fw-normal">{totalTimesWorkHours}</span>
         </td>
         <td>
-          <span className="fw-normal">{startedTime}</span>
+          <span className="fw-normal">{totalTimesLateClockIn}</span>
         </td>
         <td>
-          <span className="fw-normal">{finishedTime}</span>
+          <span className="fw-normal">{totalTimesEarlyClockOut}</span>
         </td>
         <td>
-          <span className="fw-normal">{earlyMinutes} phút</span>
+          <span className="fw-normal">{totalTimesAbsent}</span>
+        </td>
+
+        {/* The Action column */}
+        <td>
+          <Dropdown as={ButtonGroup}>
+            <Dropdown.Toggle
+              as={Button}
+              split
+              variant="link"
+              className="text-dark m-0 p-0"
+            >
+              <span className="icon icon-sm">
+                <FontAwesomeIcon icon={faEllipsisH} className="icon-dark" />
+              </span>
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu as={ButtonGroup}>
+              <Dropdown.Item as={Button} onClick={() => handleShowDetail()}>
+                <FontAwesomeIcon icon={faEye} className="me-2" /> View Details
+              </Dropdown.Item>
+              {/* <Modal
+                as={Modal.Dialog}
+                centered
+                show={showDetail}
+                fullscreen={true}
+                onHide={() => setshowDetail(false)}
+              >
+                <Modal.Header>
+                  <Modal.Title className="h6">
+                    Thông tin của nhân viên {personName ? personName : "Noname"}{" "}
+                    với ID: {id}
+                  </Modal.Title>
+                  <Button
+                    variant="close"
+                    aria-label="Close"
+                    onClick={() => setshowDetail(false)}
+                  />
+                </Modal.Header>
+                <Modal.Body>
+                  <p>Camera ID: {cameraId}</p>
+                  <p>Date: {date}</p>
+                  <p>Id: {id}</p>
+                  <p>
+                    Image
+                    <Image src={image} />
+                  </p>
+                  <p>Inserted Time: {insertedTime}</p>
+                  <p>Mask: {mask === 0 ? "Không" : "Có"}</p>
+                  <p>Message ID: {msgId}</p>
+                  <p>Person ID: {personId}</p>
+                  <p>Person Name: {personName}</p>
+                  <p>Person Type: {personType}</p>
+                  <p>Time: {convertTimeStampToTime(time)}</p>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setshowDetail(false)}
+                  >
+                    OK
+                  </Button>
+                  <Button
+                    variant="link"
+                    className="text-gray ms-auto"
+                    onClick={() => setshowDetail(false)}
+                  >
+                    Đóng
+                  </Button>
+                </Modal.Footer>
+              </Modal> */}
+
+              <Dropdown.Item>
+                <FontAwesomeIcon icon={faEdit} className="me-2" /> Edit
+              </Dropdown.Item>
+
+              <Dropdown.Item
+                className="text-danger"
+                as={Button}
+                onClick={() => handleShowDelete()}
+              >
+                <FontAwesomeIcon icon={faTrashAlt} className="me-2" /> Remove
+              </Dropdown.Item>
+              {/* 
+              <Modal
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+                show={showDelete}
+                onHide={() => setShowDelete(false)}
+              >
+                <Modal.Header onClick={() => setShowDelete(false)}>
+                  <Modal.Title id="contained-modal-title-vcenter">
+                    Cảnh báo
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <p>Bạn có chắc chắn muốn xóa dữ liệu này không ?</p>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button onClick={() => setShowDelete(false)}>Trở lại</Button>
+                  <Button
+                    variant="danger"
+                    className="m-1"
+                    onClick={handleDelte(id)}
+                  >
+                    Xóa
+                  </Button>
+                </Modal.Footer>
+              </Modal> */}
+            </Dropdown.Menu>
+          </Dropdown>
+        </td>
+      </tr>
+    );
+  };
+
+  const getRequestParams = (year, month, departmentName) => {
+    let params = {};
+
+    if (year) {
+      params["year"] = year;
+    }
+
+    if (month) {
+      params["month"] = month;
+    }
+
+    if (departmentName) {
+      params["departmentName"] = departmentName;
+    }
+    return params;
+  };
+
+  const retrieveDatas = () => {
+    const params = getRequestParams(year, month, departmentName);
+    console.log(params);
+    getOverallWorkingShift(params)
+      .then((res) => {
+        setDatas(res.data);
+
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(retrieveDatas, [year, month, departmentName]);
+
+  // useEffect(() => {
+  //   setPage(1);
+  //   setCurrentIndex(1);
+  // }, [searchTitle]);
+
+  // const refreshList = () => {
+  //   retrieveDatas();
+  //   setCurrentData(null);
+  //   setCurrentIndex(-1);
+  // };
+
+  // const setActiveData = (data, index) => {
+  //   setCurrentData(data);
+  //   setCurrentIndex(index);
+  // };
+
+  /*Missing removeAll() function*/
+
+  const handlePageChange = (numPage) => {
+    setCurrentIndex(numPage);
+
+    setPage(numPage);
+  };
+
+  const renderPaginationItems = () => {
+    let items = [];
+
+    for (let number = 1; number <= count; number++) {
+      items.push(
+        <Pagination.Item
+          key={number}
+          active={number === currentIndex}
+          as="button"
+          onClick={() => handlePageChange(number)}
+        >
+          {number}
+        </Pagination.Item>
+      );
+    }
+    return items;
+  };
+
+  const handlePrev = () => {
+    if (page > 1) {
+      setPage(page - 1);
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (page < count) {
+      setPage(page + 1);
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  // const convertTimestampToDate = (timestamp) => {
+  //   const date = new Date(timestamp * 1000);
+  //   const hours = date.getHours();
+
+  //   const minutes = "0" + date.getMinutes();
+
+  //   const seconds = "0" + date.getSeconds();
+
+  //   // const formattedTime =
+  //   //   hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+
+  //   const formattedTime =
+  //     date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+
+  //   return formattedTime;
+  // };
+
+  // const convertTimeStampToTime = (timestamp) => {
+  //   const date = new Date(timestamp * 1000);
+  //   const hours = date.getHours();
+
+  //   const minutes = "0" + date.getMinutes();
+
+  //   const seconds = "0" + date.getSeconds();
+
+  //   const formattedTime =
+  //     hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+  //   return formattedTime;
+  // };
+
+  return (
+    <Card border="light" className="table-wrapper table-responsive shadow-sm">
+      <Card.Body className="pt-0">
+        <Table hover className="user-table align-items-center">
+          <thead>
+            <tr>
+              <th className="border-bottom">Mã nhân viên</th>
+              <th className="border-bottom">Hình ảnh</th>
+              <th className="border-bottom">Họ và tên</th>
+              <th className="border-bottom">Phòng ban</th>
+              <th className="border-bottom">Tổng giờ công</th>
+              <th className="border-bottom">Số lần đi trễ</th>
+              <th className="border-bottom">Số lần về sớm</th>
+              <th className="border-bottom">Không chấm công</th>
+              {/* <th className="border-bottom">Nghỉ phép</th>
+              <th className="border-bottom">Nghỉ không lương</th> */}
+              <th className="border-bottom">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {datas.map((data, index) => {
+              return (
+                <TableRow key={`GeneralWorkingShift-${index}`} {...data} />
+              );
+            })}
+            {/* {checkInLogs.map((checkInLog) => {
+              return (
+                <TableRow
+                  key={`checkInLogs-${checkInLog.id}`}
+                  {...checkInLog}
+                />
+              );
+            })} */}
+          </tbody>
+        </Table>
+        <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
+          <Nav>
+            <Pagination
+              className="mb-2 mb-lg-0"
+              page={page}
+              // onChange={handleChangePages}
+              count={count}
+            >
+              <Pagination.Prev id="prev" onClick={handlePrev}>
+                Previous
+              </Pagination.Prev>
+              {renderPaginationItems()}
+              <Pagination.Next id="next" onClick={handleNext}>
+                Next
+              </Pagination.Next>
+            </Pagination>
+          </Nav>
+          <small className="fw-bold">
+            Showing <b>{size}</b> out of <b>{totalItems}</b> entries
+          </small>
+        </Card.Footer>
+      </Card.Body>
+    </Card>
+  );
+};
+
+export const DetailWorkingShiftTable = ({ searchTitle, size, data }) => {
+  // Datas and Index
+  // const [datas, setDatas] = useState([]);
+  const [currentData, setCurrentData] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(1);
+
+  // Hanle Pageable
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+
+  const [show, setShow] = useState(false);
+
+  const handleshow = () => {
+    setShow(true);
+  };
+
+  const TableRow = (props) => {
+    const {
+      date,
+      shiftName,
+      startedTime,
+      finishedTime,
+      totalWorkedHours,
+      clockIn,
+      clockOut,
+      states,
+      clockInLateMinutes,
+      clockOutEarlyMinutes,
+    } = props;
+
+    const [showDetail, setshowDetail] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
+
+    const handleShowDetail = () => {
+      setshowDetail(true);
+    };
+
+    const handleShowDelete = () => {
+      setShowDelete(true);
+    };
+
+    return (
+      <tr>
+        <td>
+          <span className="fw-normal">{date}</span>
         </td>
         <td>
-          <span className="fw-normal">{lateMinutes} phút</span>
+          <span className="fw-bold ">{shiftName}</span>
+          <div className="fw-light">
+            {startedTime} - {finishedTime} ({totalWorkedHours} giờ công)
+          </div>
         </td>
         <td>
-          <span className="fw-normal">{totalWorkedHours} giờ</span>
+          <span className="fw-normal">{clockIn}</span>
+        </td>
+        <td>
+          <span className="fw-normal">{clockOut}</span>
+        </td>
+        <td>
+          {states.map((state) => (
+            <div className="fw-normal">{state}</div>
+          ))}
+        </td>
+        <td>
+          <span className="fw-normal">
+            {clockInLateMinutes >= 0 ? clockInLateMinutes : 0}
+          </span>
+        </td>
+        <td>
+          <span className="fw-normal">
+            {clockOutEarlyMinutes >= 0 ? clockOutEarlyMinutes : 0}
+          </span>
+        </td>
+        <td>
+          <span className="fw-normal"></span>
         </td>
 
         {/* The Action column */}
@@ -1691,23 +2065,23 @@ export const GeneralWorkingShiftTable = ({ searchTitle, size }) => {
     return params;
   };
 
-  const retrieveDatas = () => {
-    const params = getRequestParams(searchTitle, page, size);
+  // const retrieveDatas = () => {
+  //   const params = getRequestParams(searchTitle, page, size);
 
-    listShiftsPage(params)
-      .then((res) => {
-        const { shifts, totalPages, totalItems } = res.data;
+  //   listShiftsPage(params)
+  //     .then((res) => {
+  //       const { shifts, totalPages, totalItems } = res.data;
 
-        setDatas(shifts);
-        setCount(totalPages);
-        setTotalItems(totalItems);
+  //       setDatas(shifts);
+  //       setCount(totalPages);
+  //       setTotalItems(totalItems);
 
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  //       console.log(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
 
   // useEffect(retrieveDatas, [page, size, searchTitle]);
 
@@ -1716,11 +2090,11 @@ export const GeneralWorkingShiftTable = ({ searchTitle, size }) => {
     setCurrentIndex(1);
   }, [searchTitle]);
 
-  const refreshList = () => {
-    retrieveDatas();
-    setCurrentData(null);
-    setCurrentIndex(-1);
-  };
+  // const refreshList = () => {
+  //   retrieveDatas();
+  //   setCurrentData(null);
+  //   setCurrentIndex(-1);
+  // };
 
   const setActiveData = (data, index) => {
     setCurrentData(data);
@@ -1767,59 +2141,28 @@ export const GeneralWorkingShiftTable = ({ searchTitle, size }) => {
     }
   };
 
-  // const convertTimestampToDate = (timestamp) => {
-  //   const date = new Date(timestamp * 1000);
-  //   const hours = date.getHours();
-
-  //   const minutes = "0" + date.getMinutes();
-
-  //   const seconds = "0" + date.getSeconds();
-
-  //   // const formattedTime =
-  //   //   hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
-
-  //   const formattedTime =
-  //     date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
-
-  //   return formattedTime;
-  // };
-
-  // const convertTimeStampToTime = (timestamp) => {
-  //   const date = new Date(timestamp * 1000);
-  //   const hours = date.getHours();
-
-  //   const minutes = "0" + date.getMinutes();
-
-  //   const seconds = "0" + date.getSeconds();
-
-  //   const formattedTime =
-  //     hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
-  //   return formattedTime;
-  // };
-
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
         <Table hover className="user-table align-items-center">
           <thead>
             <tr>
-              <th className="border-bottom">#</th>
-              <th className="border-bottom">Mã Nhân Viên</th>
-              <th className="border-bottom">Hình ảnh</th>
-              <th className="border-bottom">Họ và tên</th>
-              <th className="border-bottom">Phòng ban</th>
-              <th className="border-bottom">Tổng giờ công</th>
-              <th className="border-bottom">Số lần đi trễ</th>
-              <th className="border-bottom">Số lần về sớm</th>
-              <th className="border-bottom">Không chấm công</th>
-              <th className="border-bottom">Nghỉ phép</th>
-              <th className="border-bottom">Nghỉ không lương</th>
+              <th className="border-bottom">Ngày</th>
+              <th className="border-bottom">Ca làm việc</th>
+              <th className="border-bottom">Giờ vào</th>
+              <th className="border-bottom">Giờ ra</th>
+              <th className="border-bottom">Tình trạng</th>
+              <th className="border-bottom">Đi trễ (Phút)</th>
+              <th className="border-bottom">Về sớm (Phút)</th>
+              <th className="border-bottom">Ghi chú</th>
               <th className="border-bottom">Action</th>
             </tr>
           </thead>
           <tbody>
-            {datas.map((data, index) => {
-              return <TableRow key={`checkInLogs-${data.id}`} {...data} />;
+            {data.map((data_, index) => {
+              return (
+                <TableRow key={`DetailWorkingShift-${index}`} {...data_} />
+              );
             })}
             {/* {checkInLogs.map((checkInLog) => {
               return (
@@ -2446,36 +2789,6 @@ export const EmployeesDepartmentTable = ({ searchTitle, size }) => {
       setCurrentIndex(currentIndex + 1);
     }
   };
-
-  // const convertTimestampToDate = (timestamp) => {
-  //   const date = new Date(timestamp * 1000);
-  //   const hours = date.getHours();
-
-  //   const minutes = "0" + date.getMinutes();
-
-  //   const seconds = "0" + date.getSeconds();
-
-  //   // const formattedTime =
-  //   //   hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
-
-  //   const formattedTime =
-  //     date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
-
-  //   return formattedTime;
-  // };
-
-  // const convertTimeStampToTime = (timestamp) => {
-  //   const date = new Date(timestamp * 1000);
-  //   const hours = date.getHours();
-
-  //   const minutes = "0" + date.getMinutes();
-
-  //   const seconds = "0" + date.getSeconds();
-
-  //   const formattedTime =
-  //     hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
-  //   return formattedTime;
-  // };
 
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">

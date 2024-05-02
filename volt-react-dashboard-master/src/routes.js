@@ -7,8 +7,8 @@ export const Routes = {
   Calendars: { path: "/calendars" },
   OrganizeStructures: { path: "/organize-structures" },
   GeneralWorkingShifts: { path: "/general-working-shifts" },
+  DetailWorkingShifts: { path: "/detail-working-shifts" },
   Departments: { path: "/departments" },
-
   EmployeesDepartments: { path: "/departments/:id" },
 
   Settings: { path: "/settings" },

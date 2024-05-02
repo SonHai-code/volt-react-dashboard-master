@@ -60,6 +60,7 @@ import AuthService from "../services/auth.service";
 import useIsLoggedIn, { useAuth } from "../common/useAuth";
 import Department from "./Department";
 import EmployeesDepartment from "./EmployeesDepartment";
+import DetailWorkingShift from "./DetailWorkingShift";
 
 const RouteWithLoader = ({ component: Component, ...rest }) => {
   const [loaded, setLoaded] = useState(false);
@@ -131,36 +132,6 @@ const RouteWithSidebar = ({ component: Component, ...rest }) => {
 };
 
 export default () => {
-  // let history = useHistory();
-
-  // const [currentUser, setCurrentUser] = useState(undefined);
-  // const [username, setUsername] = useState("");
-
-  // const logOut = useCallback(() => {
-  //   AuthService.logout();
-  //   setCurrentUser(undefined);
-  //   setUsername("");
-  //   history.push(Routes.Presentation.path);
-  // }, [history]);
-
-  // useEffect(() => {
-  //   const user = JSON.parse(localStorage.getItem("user"));
-  //   setCurrentUser(user);
-
-  //   if (user) {
-  //     setCurrentUser(user);
-  //     setUsername(user.username);
-  //   }
-
-  //   eventBus.on("logout", () => {
-  //     logOut();
-  //   });
-
-  //   return () => {
-  //     eventBus.remove("logout");
-  //   };
-  // }, [history, logOut]);
-
   return (
     <div>
       <Switch>
@@ -231,6 +202,12 @@ export default () => {
           exact
           path={Routes.GeneralWorkingShifts.path}
           component={GeneralWorkingShift}
+        />
+
+        <RouteWithSidebar
+          exact
+          path={Routes.DetailWorkingShifts.path}
+          component={DetailWorkingShift}
         />
 
         <RouteWithSidebar

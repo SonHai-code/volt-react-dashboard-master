@@ -31,6 +31,7 @@ import {
   faPeopleCarry,
   faLocationArrow,
   faSquareFull,
+  faCircleNotch,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   Nav,
@@ -238,10 +239,17 @@ export default (props = {}) => {
                   icon={faSitemap}
                   link={Routes.OrganizeStructures.path}
                 />
+
                 <NavItem
-                  title="Thông tin nhân viên"
+                  title="Tổng hợp công"
                   icon={faUserCircle}
                   link={Routes.GeneralWorkingShifts.path}
+                />
+
+                <NavItem
+                  title="Chi tiết công"
+                  icon={faCircleNotch}
+                  link={Routes.DetailWorkingShifts.path}
                 />
               </CollapsableNavItem>
 

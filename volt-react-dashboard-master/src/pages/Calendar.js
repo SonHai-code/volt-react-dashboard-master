@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { Breadcrumb, Col, Form, Row } from "@themesberg/react-bootstrap";
-
 import { Calendars } from "../components/Calendars";
-
 import { listDepartmentNames } from "../services/DepartmentService";
 
 export default () => {
