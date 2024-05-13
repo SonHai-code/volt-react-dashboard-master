@@ -50,7 +50,7 @@ export default () => {
               <FontAwesomeIcon icon={faHome} />
             </Breadcrumb.Item>
             <Breadcrumb.Item>App</Breadcrumb.Item>
-            <Breadcrumb.Item as={Link} to={Routes.Departments.path}>
+            <Breadcrumb.Item active as={Link} to={Routes.Departments.path}>
               Quản lý các phòng ban
             </Breadcrumb.Item>
 

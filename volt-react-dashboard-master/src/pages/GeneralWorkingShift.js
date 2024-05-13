@@ -27,6 +27,7 @@ import {
 import { useSyncExternalStore } from "react";
 import Calendars from "../components/Calendars";
 import { listDepartmentNames } from "../services/DepartmentService";
+import { useHistory } from "react-router-dom";
 
 export default () => {
   const [search, setSearch] = useState("");
@@ -34,6 +35,7 @@ export default () => {
   const [size, setSize] = useState(10);
   const pageSizes = [5, 10, 15];
   const [data, setData] = useState([]);
+  let history = useHistory();
 
   // parameters
   const [departmentName, setDepartmentName] = useState("Design team");
@@ -53,7 +55,7 @@ export default () => {
     }
   };
 
-  useEffect(retrieveData, []);
+  useEffect(retrieveData, [history.location.search]);
 
   const onChangeSearchPersonName = (e) => {
     setSearch(e.target.value);

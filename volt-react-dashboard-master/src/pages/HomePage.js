@@ -65,12 +65,8 @@ import DetailWorkingShift from "./DetailWorkingShift";
 const RouteWithLoader = ({ component: Component, ...rest }) => {
   const [loaded, setLoaded] = useState(false);
 
-  function handleLoaded(value) {
-    setLoaded(value);
-  }
-
   useEffect(() => {
-    const timer = setTimeout(() => setLoaded(true), 1000);
+    const timer = setTimeout(() => setLoaded(true), 2000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -80,8 +76,7 @@ const RouteWithLoader = ({ component: Component, ...rest }) => {
       render={(props) => (
         <>
           {" "}
-          <Preloader show={loaded ? false : true} />
-          <Component {...props} changeLoaded={handleLoaded} />{" "}
+          <Preloader show={loaded ? false : true} /> <Component {...props} />{" "}
         </>
       )}
     />
@@ -130,7 +125,6 @@ const RouteWithSidebar = ({ component: Component, ...rest }) => {
     />
   );
 };
-
 export default () => {
   return (
     <div>

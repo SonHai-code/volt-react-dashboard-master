@@ -52,6 +52,7 @@
     "react-datetime": "^3.0.4",
     "react-dom": "^16.13.1",
     "react-github-btn": "^1.2.0",
+    "react-image-file-resizer": "^0.4.8",
     "react-live": "^2.2.3",
     "react-redux": "^9.1.0",
     "react-router-dom": "^5.3.0",

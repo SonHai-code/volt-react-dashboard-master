@@ -267,7 +267,7 @@ export default (props = {}) => {
                 <NavItem
                   title="Chức danh"
                   icon={faSquareFull}
-                  link={Routes.Shifts.path}
+                  // link={Routes.Shifts.path}
                 />
                 <NavItem
                   title="Các phòng ban"

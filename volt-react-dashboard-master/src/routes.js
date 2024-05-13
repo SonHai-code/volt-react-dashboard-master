@@ -3,11 +3,18 @@ export const Routes = {
   Presentation: { path: "/" },
   DashboardOverview: { path: "/dashboard/overview" },
   Transactions: { path: "/transactions" },
+
   Shifts: { path: "/shifts" },
+
   Calendars: { path: "/calendars" },
   OrganizeStructures: { path: "/organize-structures" },
+
   GeneralWorkingShifts: { path: "/general-working-shifts" },
-  DetailWorkingShifts: { path: "/detail-working-shifts" },
+
+  DetailWorkingShifts: {
+    path: "/detail-working-shifts",
+  },
+
   Departments: { path: "/departments" },
   EmployeesDepartments: { path: "/departments/:id" },
 

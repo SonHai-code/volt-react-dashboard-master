@@ -53,7 +53,10 @@ import { ShiftInfoForm } from "./Forms";
 import { listDepartmentsPage } from "../services/DepartmentService";
 import UserService from "../services/user.service";
 import { max } from "moment";
-import { getOverallWorkingShift } from "../services/WorkService";
+import {
+  getDetailWorkingShiftByEmployeeCode,
+  getOverallWorkingShift,
+} from "../services/WorkService";
 
 const ValueChange = ({ value, suffix }) => {
   const valueIcon = value < 0 ? faAngleDown : faAngleUp;
@@ -983,7 +986,7 @@ export const ShiftTable = ({ searchTitle, size }) => {
 
   const retrieveDatas = () => {
     const params = getRequestParams(searchTitle, page, size);
-
+    console.log(params);
     listShiftsPage(params)
       .then((res) => {
         const { shifts, totalPages, totalItems } = res.data;
@@ -1577,8 +1580,16 @@ export const GeneralWorkingShiftTable = ({
             </Dropdown.Toggle>
 
             <Dropdown.Menu as={ButtonGroup}>
-              <Dropdown.Item as={Button} onClick={() => handleShowDetail()}>
-                <FontAwesomeIcon icon={faEye} className="me-2" /> View Details
+              <Dropdown.Item
+                as={Link}
+                to={{
+                  pathname: Routes.DetailWorkingShifts.path,
+                  search: `?employeeCode=${employeeCode}&year=${year}&month=${month}`,
+                  // state: { fromDashboard: true },
+                }}
+              >
+                <FontAwesomeIcon icon={faEye} className="me-2" /> Xem chi tiết
+                công
               </Dropdown.Item>
               {/* <Modal
                 as={Modal.Dialog}
@@ -1707,7 +1718,7 @@ export const GeneralWorkingShiftTable = ({
       });
   };
 
-  useEffect(retrieveDatas, [year, month, departmentName]);
+  useEffect(retrieveDatas, [year, month, departmentName, searchTitle, size]);
 
   // useEffect(() => {
   //   setPage(1);
@@ -1798,38 +1809,40 @@ export const GeneralWorkingShiftTable = ({
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
-        <Table hover className="user-table align-items-center">
-          <thead>
-            <tr>
-              <th className="border-bottom">Mã nhân viên</th>
-              <th className="border-bottom">Hình ảnh</th>
-              <th className="border-bottom">Họ và tên</th>
-              <th className="border-bottom">Phòng ban</th>
-              <th className="border-bottom">Tổng giờ công</th>
-              <th className="border-bottom">Số lần đi trễ</th>
-              <th className="border-bottom">Số lần về sớm</th>
-              <th className="border-bottom">Không chấm công</th>
-              {/* <th className="border-bottom">Nghỉ phép</th>
+        {datas.length > 0 ? (
+          <Table hover className="user-table align-items-center">
+            <thead>
+              <tr>
+                <th className="border-bottom">Mã nhân viên</th>
+                <th className="border-bottom">Hình ảnh</th>
+                <th className="border-bottom">Họ và tên</th>
+                <th className="border-bottom">Phòng ban</th>
+                <th className="border-bottom">Tổng giờ công</th>
+                <th className="border-bottom">Số lần đi trễ</th>
+                <th className="border-bottom">Số lần về sớm</th>
+                <th className="border-bottom">Không chấm công</th>
+                {/* <th className="border-bottom">Nghỉ phép</th>
               <th className="border-bottom">Nghỉ không lương</th> */}
-              <th className="border-bottom">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {datas.map((data, index) => {
-              return (
+                <th className="border-bottom">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {datas.map((data, index) => (
                 <TableRow key={`GeneralWorkingShift-${index}`} {...data} />
-              );
-            })}
-            {/* {checkInLogs.map((checkInLog) => {
-              return (
-                <TableRow
-                  key={`checkInLogs-${checkInLog.id}`}
-                  {...checkInLog}
-                />
-              );
-            })} */}
-          </tbody>
-        </Table>
+              ))}
+            </tbody>
+          </Table>
+        ) : (
+          <div
+            className="container-fluid d-flex justify-content-center align-items-center"
+            style={{ height: "60vh" }}
+          >
+            {/* Your content goes here */}
+            <p className="text-sm">Chưa có dữ liệu</p>
+          </div>
+        )}
+
         <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
           <Nav>
             <Pagination
@@ -1856,9 +1869,12 @@ export const GeneralWorkingShiftTable = ({
   );
 };
 
-export const DetailWorkingShiftTable = ({ searchTitle, size, data }) => {
+export const DetailWorkingShiftTable = ({ searchTitle, size }) => {
+  const history = useHistory();
+  const [params, setParams] = useState({});
+
   // Datas and Index
-  // const [datas, setDatas] = useState([]);
+  const [datas, setDatas] = useState([]);
   const [currentData, setCurrentData] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(1);
 
@@ -1866,7 +1882,6 @@ export const DetailWorkingShiftTable = ({ searchTitle, size, data }) => {
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
-
   const [show, setShow] = useState(false);
 
   const handleshow = () => {
@@ -2048,47 +2063,35 @@ export const DetailWorkingShiftTable = ({ searchTitle, size, data }) => {
     );
   };
 
-  const getRequestParams = (searchTitle, page, pageSize) => {
-    let params = {};
+  useEffect(() => {
+    const searchParams = new URLSearchParams(history.location.search);
+    console.log(searchParams);
+    const employeeCode = searchParams.get("employeeCode");
+    const year = searchParams.get("year");
+    const month = searchParams.get("month");
 
-    if (searchTitle) {
-      params["name"] = searchTitle;
-    }
+    console.log({ employeeCode, year, month });
 
-    if (page) {
-      params["page"] = page - 1;
-    }
+    setParams({ employeeCode, year, month });
+  }, [history.location.search, searchTitle, size]);
 
-    if (pageSize) {
-      params["size"] = pageSize;
+  const retrieveDatas = async () => {
+    try {
+      let response = await getDetailWorkingShiftByEmployeeCode(params);
+      console.log(response.data);
+
+      setDatas(response.data);
+    } catch (error) {
+      console.log(error);
     }
-    return params;
   };
 
-  // const retrieveDatas = () => {
-  //   const params = getRequestParams(searchTitle, page, size);
+  useEffect(retrieveDatas, [history.location.search]);
 
-  //   listShiftsPage(params)
-  //     .then((res) => {
-  //       const { shifts, totalPages, totalItems } = res.data;
-
-  //       setDatas(shifts);
-  //       setCount(totalPages);
-  //       setTotalItems(totalItems);
-
-  //       console.log(res.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
-
-  // useEffect(retrieveDatas, [page, size, searchTitle]);
-
-  useEffect(() => {
-    setPage(1);
-    setCurrentIndex(1);
-  }, [searchTitle]);
+  // useEffect(() => {
+  //   setPage(1);
+  //   setCurrentIndex(1);
+  // }, [searchTitle]);
 
   // const refreshList = () => {
   //   retrieveDatas();
@@ -2159,19 +2162,9 @@ export const DetailWorkingShiftTable = ({ searchTitle, size, data }) => {
             </tr>
           </thead>
           <tbody>
-            {data.map((data_, index) => {
-              return (
-                <TableRow key={`DetailWorkingShift-${index}`} {...data_} />
-              );
+            {datas.map((data, index) => {
+              return <TableRow key={`DetailWorkingShift-${index}`} {...data} />;
             })}
-            {/* {checkInLogs.map((checkInLog) => {
-              return (
-                <TableRow
-                  key={`checkInLogs-${checkInLog.id}`}
-                  {...checkInLog}
-                />
-              );
-            })} */}
           </tbody>
         </Table>
         <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
@@ -2267,7 +2260,8 @@ export const DepartmentTable = ({ searchTitle, size }) => {
 
             <Dropdown.Menu as={ButtonGroup}>
               <Dropdown.Item as={Link} to={Routes.Departments.path + "/" + id}>
-                <FontAwesomeIcon icon={faEye} className="me-2" /> View Details
+                <FontAwesomeIcon icon={faEye} className="me-2" /> Xem nhân viên
+                phòng ban
               </Dropdown.Item>
               {/* <Modal
                 as={Modal.Dialog}
@@ -2321,7 +2315,7 @@ export const DepartmentTable = ({ searchTitle, size }) => {
               </Modal> */}
 
               <Dropdown.Item>
-                <FontAwesomeIcon icon={faEdit} className="me-2" /> Edit
+                <FontAwesomeIcon icon={faEdit} className="me-2" /> Chỉnh sửa
               </Dropdown.Item>
 
               <Dropdown.Item
@@ -2329,7 +2323,7 @@ export const DepartmentTable = ({ searchTitle, size }) => {
                 as={Button}
                 onClick={() => handleShowDelete()}
               >
-                <FontAwesomeIcon icon={faTrashAlt} className="me-2" /> Remove
+                <FontAwesomeIcon icon={faTrashAlt} className="me-2" /> Xóa
               </Dropdown.Item>
               {/* 
               <Modal
@@ -2497,7 +2491,7 @@ export const DepartmentTable = ({ searchTitle, size }) => {
               <th className="border-bottom">#</th>
               <th className="border-bottom">Tên phòng ban</th>
               <th className="border-bottom">Vị trí</th>
-              <th className="border-bottom">Action</th>
+              <th className="border-bottom">Tác vụ</th>
             </tr>
           </thead>
           <tbody>

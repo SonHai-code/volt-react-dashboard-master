@@ -32,6 +32,10 @@ const updateUser = (userId, userObj) => {
   return axios.put(API_URL + "users/" + userId, userObj);
 };
 
+const updateUserByUserProfile = (userId, userProfileObj) => {
+  return axios.put(API_URL + "users/update-user/" + userId, userProfileObj);
+};
+
 const deleteUser = (userId) => {
   return axios.delete(API_URL + "users/" + userId);
 };
@@ -55,6 +59,7 @@ const UserService = {
   deleteUser,
   getEmployeesByJobTitlePage,
   getEmployeesByDepartmentPage,
+  updateUserByUserProfile,
 };
 
 export default UserService;

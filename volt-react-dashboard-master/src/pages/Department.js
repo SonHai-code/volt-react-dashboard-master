@@ -25,7 +25,7 @@ import {
   EmployeesDepartmentTable,
 } from "../components/Tables";
 
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Routes } from "../routes";
 
 export default () => {

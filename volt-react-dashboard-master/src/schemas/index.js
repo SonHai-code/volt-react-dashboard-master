@@ -102,3 +102,34 @@ export const logInSchema = yup.object().shape({
     .required("Vui lòng điền trường này"),
   password: yup.string().required("Vui lòng điền vào trường này"),
 });
+
+export const addShiftCalendarSchema = yup.object().shape({
+  shift: yup.string().required("Chọn ca làm việc"),
+  startDay: yup.date().required("Nhập ngày bắt đầu").nullable(),
+  finishDay: yup
+    .date()
+    .required("Nhập ngày kết thúc")
+    .nullable()
+    .when("startDay", (startDay, schema) =>
+      startDay
+        ? schema.min(startDay, "Ngày kết thúc phải sau ngày bắt đầu")
+        : schema
+    ),
+});
+
+export const myProfileSchema = yup.object().shape({
+  firstName: yup.string().required("Vui lòng điền vào trường này!"),
+
+  lastName: yup.string().required("Vui lòng điền vào trường này!"),
+
+  email: yup
+    .string()
+    .email("Vui lòng điền đúng định dạng email.")
+    .required("Vui lòng điền vào trường này!"),
+
+  image: yup
+    .string()
+    .required("Vui lòng lựa chọn ảnh đại diện có khuôn mặt bạn."),
+
+  phoneNumber: yup.string().required("Vui lòng điền số điện thoại của bạn"),
+});

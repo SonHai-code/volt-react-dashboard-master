@@ -23,49 +23,52 @@ import {
 } from "@themesberg/react-bootstrap";
 
 import NOTIFICATIONS_DATA from "../data/notifications";
-import Profile3 from "../assets/img/team/profile-picture-3.jpg";
 import eventBus from "../common/EventBus";
+import DefaultImage from "../assets/img/Default_pfp.svg.png";
 
 import AuthService from "../services/auth.service";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Routes } from "../routes";
 
 export default (props) => {
-  // let history = useHistory();
+  let history = useHistory();
 
-  // const [currentUser, setCurrentUser] = useState(undefined);
-  // const [username, setUsername] = useState("");
+  const [currentUser, setCurrentUser] = useState(undefined);
+  const [username, setUsername] = useState("");
+  const [profileImage, setProfileImage] = useState("");
 
-  // useEffect(() => {
-  //   const user = JSON.parse(localStorage.getItem("user"));
-  //
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
 
-  //   if (user) {
-  //     setCurrentUser(user);
-  //     setUsername(user.username);
-  //   }
+    if (user) {
+      setCurrentUser(user);
+      setUsername(user.username);
+      setProfileImage(user.profileImage);
+    }
 
-  //   eventBus.on("logout", () => {
-  //     logOut();
-  //   });
+    eventBus.on("logout", () => {
+      logOut();
+    });
 
-  //   return () => {
-  //     eventBus.remove("logout");
-  //   };
-  // }, [history]);
+    return () => {
+      eventBus.remove("logout");
+    };
+  }, [history]);
 
-  // const logOut = () => {
-  //   AuthService.logout();
-  //   setCurrentUser(undefined);
-  //   setUsername("");
-  //   history.push(Routes.Presentation.path);
-  // };
+  const logOut = () => {
+    AuthService.logout();
+    setCurrentUser(undefined);
+    setUsername("");
+    setProfileImage("");
+    history.push(Routes.Presentation.path);
+  };
 
-  // useEffect(() => {
-  //   const user = JSON.parse(localStorage.getItem("user"));
-  //   setCurrentUser(user);
-  //   setUsername(user.username);
-  // }, []);
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    setCurrentUser(user);
+    setUsername(user.username);
+    setProfileImage(user.profileImage);
+  }, []);
 
   const [notifications, setNotifications] = useState(NOTIFICATIONS_DATA);
 
@@ -162,21 +165,34 @@ export default (props) => {
             <Dropdown as={Nav.Item}>
               <Dropdown.Toggle as={Nav.Link} className="pt-1 px-0">
                 <div className="media d-flex align-items-center">
-                  <Image
-                    src={Profile3}
-                    className="user-avatar md-avatar rounded-circle"
-                  />
+                  {profileImage ? (
+                    <Image
+                      src={profileImage}
+                      className="user-avatar md-avatar rounded-circle object-fit-fill"
+                    />
+                  ) : (
+                    <Image
+                      src={DefaultImage}
+                      className="user-avatar md-avatar rounded-circle"
+                    />
+                  )}
+
                   <div className="media-body ms-2 text-dark align-items-center d-none d-lg-block">
-                    <span className="mb-0 font-small fw-bold">SH</span>
+                    <span className="mb-0 font-small fw-bold">{username}</span>
                   </div>
                 </div>
               </Dropdown.Toggle>
+
               <Dropdown.Menu className="user-dropdown dropdown-menu-right mt-2">
                 <Dropdown.Item className="fw-bold">
                   <FontAwesomeIcon icon={faUserCircle} className="me-2" /> My
                   Profile
                 </Dropdown.Item>
-                <Dropdown.Item className="fw-bold">
+                <Dropdown.Item
+                  className="fw-bold"
+                  as={Link}
+                  to={Routes.Settings.path}
+                >
                   <FontAwesomeIcon icon={faCog} className="me-2" /> Settings
                 </Dropdown.Item>
                 <Dropdown.Item className="fw-bold">
@@ -190,11 +206,7 @@ export default (props) => {
 
                 <Dropdown.Divider />
 
-                <Dropdown.Item
-                  className="fw-bold"
-                  as="button"
-                  // onClick={logOut}
-                >
+                <Dropdown.Item className="fw-bold" as="button">
                   <FontAwesomeIcon
                     icon={faSignOutAlt}
                     className="text-danger me-2"
@@ -206,7 +218,6 @@ export default (props) => {
           </Nav>
         </div>
       </Container>
-      {/* <AuthVerify logOut={logOut} /> */}
     </Navbar>
   );
 };

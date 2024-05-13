@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBoxOpen,
@@ -17,10 +17,12 @@ import { ChoosePhotoWidget, ProfileCardWidget } from "../components/Widgets";
 import {
   EventCalendarForm,
   GeneralInfoForm,
+  MyProfileInfoForm,
   ShiftInfoForm,
 } from "../components/Forms";
 
 import Profile3 from "../assets/img/team/profile-picture-3.jpg";
+import AuthService from "../services/auth.service";
 
 export default () => {
   return (
@@ -94,7 +96,8 @@ export default () => {
 
       <Row>
         <Col xs={12} xl={8}>
-          <EventCalendarForm />
+          {/* Form */}
+          <MyProfileInfoForm />
         </Col>
 
         <Col xs={12} xl={4}>

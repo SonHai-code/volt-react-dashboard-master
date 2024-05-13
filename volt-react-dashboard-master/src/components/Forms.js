@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import moment from "moment-timezone";
 import Datetime from "react-datetime";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,12 +11,21 @@ import {
   Button,
   InputGroup,
   FormControl,
+  FormLabel,
+  FormSelect,
 } from "@themesberg/react-bootstrap";
 import { createNewShift } from "../services/ShiftService";
 import { Field, Formik } from "formik";
-import { shiftSchema } from "../schemas";
+import {
+  addShiftCalendarSchema,
+  myProfileSchema,
+  shiftSchema,
+} from "../schemas";
 import FormikFieldDTPicker from "./FormikFieldDTPicker";
 import { addShiftsToDepartment } from "../services/DepartmentService";
+import { ChoosePhotoWidget } from "./Widgets";
+import AuthService from "../services/auth.service";
+import UserService from "../services/user.service";
 
 export const GeneralInfoForm = () => {
   const [birthday, setBirthday] = useState("");
@@ -683,6 +692,7 @@ export const ShiftInfoForm = () => {
 
 export const EventCalendarForm = ({ data, name }) => {
   // const [data, setData] = useState([]);
+  const [message, setMessage] = useState("");
 
   console.log(name);
 
@@ -690,18 +700,22 @@ export const EventCalendarForm = ({ data, name }) => {
     const startDayString = moment(values.startDay).format("yyyy-MM-DD");
     const finishDayString = moment(values.finishDay).format("yyyy-MM-DD");
 
-    try {
-      let response = addShiftsToDepartment(
-        name,
-        values.shift,
-        startDayString,
-        finishDayString
-      );
-      console.log(response);
-      // setData(response);
-      // window.location.reload();
-    } catch (error) {
-      console.log(error);
+    if (!moment(values.startDay).isBefore(moment(values.finishDay))) {
+      setMessage("Ngày kết thúc phải sau ngày bắt đầu. Vui lòng thử lại");
+    } else {
+      try {
+        let response = addShiftsToDepartment(
+          name,
+          values.shift,
+          startDayString,
+          finishDayString
+        );
+        console.log(response);
+        // setData(response);
+        window.location.reload();
+      } catch (error) {
+        setMessage(error.data);
+      }
     }
   };
 
@@ -718,12 +732,13 @@ export const EventCalendarForm = ({ data, name }) => {
             finishDay: "",
           }}
         >
-          {({ handleSubmit, handleChange, handleBlur, values }) => (
+          {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
             <Form onSubmit={handleSubmit}>
               <Row>
                 <Col md={6} className="mb-3">
                   <Form.Group id="shift">
                     <Form.Label>Chọn ca làm việc</Form.Label>
+
                     <Form.Select
                       name="shift"
                       value={values.shift}
@@ -748,6 +763,7 @@ export const EventCalendarForm = ({ data, name }) => {
                       <InputGroup.Text>
                         <FontAwesomeIcon icon={faCalendarAlt} />
                       </InputGroup.Text>
+
                       <FormikFieldDTPicker name="startDay" />
                     </InputGroup>
                   </Form.Group>
@@ -765,12 +781,306 @@ export const EventCalendarForm = ({ data, name }) => {
                   </Form.Group>
                 </Col>
               </Row>
+              {message && <div className="text-danger">{message}</div>}
 
               <div className="mt-3">
                 <Button variant="primary" type="submit">
                   Thêm
                 </Button>
               </div>
+            </Form>
+          )}
+        </Formik>
+      </Card.Body>
+    </Card>
+  );
+};
+
+export const MyProfileInfoForm = () => {
+  // const [currentUser, setCurrentUser] = useState({});
+
+  // Get current user from local storage
+  let currentUser = AuthService.getCurrentUser();
+
+  // useEffect(() => {
+  //   console.log(user.email);
+  //   setCurrentUser(user);
+  // }, []);
+
+  // console.log(`username = ${currentUser.username}`);
+  // console.log(`email = ${currentUser.email}`);
+  // console.log(`username = ${currentUser.username}`);
+  // console.log(`username = ${currentUser.username}`);
+  // useEffect(() => {
+  //   setDefaultValues({
+  //     email: user.email,
+  //     username: user.username,
+  //   });
+  // }, [user]);
+
+  const getRequestBody = (
+    userId,
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    profileImage
+  ) => {
+    let requestBody = {};
+
+    if (userId) {
+      requestBody["userId"] = userId;
+    }
+
+    if (firstName) {
+      requestBody["firstName"] = firstName.trim();
+    }
+
+    if (lastName) {
+      requestBody["lastName"] = lastName.trim();
+    }
+    if (email) {
+      requestBody["email"] = email.trim();
+    }
+    if (phoneNumber) {
+      requestBody["phoneNumber"] = phoneNumber;
+    }
+    if (profileImage) {
+      requestBody["profileImage"] = profileImage;
+    }
+
+    return requestBody;
+  };
+
+  const onSubmit = async (values) => {
+    let response;
+    console.log(values);
+
+    const userProfileObj = getRequestBody(
+      currentUser.id,
+      values.firstName,
+      values.lastName,
+      values.email,
+      values.phoneNumber,
+      values.image
+    );
+
+    try {
+      response = await UserService.updateUserByUserProfile(
+        currentUser.id,
+        userProfileObj
+      );
+
+      const updatedUser = response.data;
+
+      console.log(`currentUser = ${currentUser}`);
+
+      // Update for the "user" in localstorage
+      const userObj = {};
+      userObj["email"] = updatedUser.email;
+
+      if (updatedUser.profileImage) {
+        userObj["profileImage"] = updatedUser.profileImage;
+      } else {
+        userObj["profileImage"] = currentUser.profileImage;
+      }
+
+      userObj["username"] = updatedUser.username;
+      userObj["id"] = currentUser.id;
+      userObj["roles"] = currentUser.roles;
+      userObj["token"] = currentUser.token;
+      userObj["type"] = currentUser.type;
+
+      localStorage.setItem("user", JSON.stringify(userObj));
+
+      console.log(updatedUser);
+
+      window.location.reload();
+    } catch (e) {
+      console.log(e);
+      console.log(e.data.message);
+    }
+  };
+
+  return (
+    <Card border="light" className="bg-white shadow-sm mb-4">
+      <Card.Body>
+        <Formik
+          onSubmit={onSubmit}
+          initialValues={{
+            firstName: currentUser.username.trim(),
+            lastName: "",
+            email: currentUser.email,
+            image: "",
+            phoneNumber: "",
+          }}
+          validationSchema={myProfileSchema}
+        >
+          {({
+            handleSubmit,
+            handleChange,
+            handleBlur,
+            values,
+            touched,
+            errors,
+            isSubmitting,
+            setFieldValue,
+          }) => (
+            <Form noValidate onSubmit={handleSubmit}>
+              <Row>
+                <Col md={12} className="mb-3">
+                  <Form.Group
+                    as={Row}
+                    className="mb-3"
+                    id="firstName"
+                    controlId="validationFormikFirstName"
+                  >
+                    <Form.Label sm="2" column>
+                      <span className="text-danger">*</span>
+                      Tên
+                    </Form.Label>
+
+                    <Col sm="10">
+                      <Form.Control
+                        required
+                        type="text"
+                        name="firstName"
+                        value={values.firstName}
+                        placeholder="Vui lòng điền tên của bạn"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={!!errors.firstName}
+                        isValid={touched.firstName && !errors.firstName}
+                      />
+                      <FormControl.Feedback type="invalid">
+                        {errors.firstName}
+                      </FormControl.Feedback>
+                      <FormControl.Feedback type="valid">
+                        Hợp lệ.
+                      </FormControl.Feedback>
+                    </Col>
+                  </Form.Group>
+                </Col>
+
+                <Col md={12} className="mb-3">
+                  <Form.Group
+                    as={Row}
+                    className="mb-3"
+                    id="lastName"
+                    controlId="validationFormikLastName"
+                  >
+                    <Form.Label sm="2" column>
+                      <span className="text-danger">*</span> Họ và tên đệm
+                    </Form.Label>
+                    <Col sm="10">
+                      <Form.Control
+                        required
+                        type="text"
+                        name="lastName"
+                        value={values.lastName}
+                        placeholder="Vui lòng điền họ và tên đệm của bạn"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={!!errors.lastName}
+                        isValid={touched.lastName && !errors.lastName}
+                      />
+                      <FormControl.Feedback type="invalid">
+                        {errors.lastName}
+                      </FormControl.Feedback>
+                      <FormControl.Feedback type="valid">
+                        Hợp lệ.
+                      </FormControl.Feedback>
+                    </Col>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col md={12} className="mb-3">
+                  <Form.Group
+                    as={Row}
+                    className="mb-3"
+                    id="email"
+                    controlId="validationFormikEmail"
+                  >
+                    <Form.Label sm="2" column>
+                      <span className="text-danger">*</span>
+                      Địa chỉ email:
+                    </Form.Label>
+                    <Col sm="10">
+                      <Form.Control
+                        required
+                        type="text"
+                        name="email"
+                        value={values.email}
+                        placeholder="Vui lòng điền địa chỉ gmail của bạn"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        // defaultValue={currentUser.email}
+                        isInvalid={!!errors.email}
+                        isValid={touched.email && !errors.email}
+                      />
+                      <FormControl.Feedback type="invalid">
+                        {errors.email}
+                      </FormControl.Feedback>
+                      <FormControl.Feedback type="valid">
+                        Hợp lệ.
+                      </FormControl.Feedback>
+                    </Col>
+                  </Form.Group>
+                </Col>
+
+                <Col md={12} className="mb-3">
+                  <Form.Group
+                    as={Row}
+                    className="mb-3"
+                    id="lastName"
+                    controlId="validationFormikLastName"
+                  >
+                    <Form.Label sm="2" column>
+                      <span className="text-danger">*</span> Số điện thoại
+                    </Form.Label>
+                    <Col sm="10">
+                      <Form.Control
+                        required
+                        type="text"
+                        name="phoneNumber"
+                        value={values.phoneNumber}
+                        placeholder="Vui lòng nhập số điện thoại của bạn"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={!!errors.phoneNumber}
+                        isValid={touched.phoneNumber && !errors.phoneNumber}
+                      />
+                      <FormControl.Feedback type="invalid">
+                        {errors.phoneNumber}
+                      </FormControl.Feedback>
+                      <FormControl.Feedback type="valid">
+                        Hợp lệ.
+                      </FormControl.Feedback>
+                    </Col>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col md={12} className="mb-3">
+                  <Form.Label sm="2">
+                    <span className="text-danger">*</span> Chọn ảnh đại diện
+                  </Form.Label>
+
+                  <Col xs={12}>
+                    <ChoosePhotoWidget
+                      title="Chọn ảnh đại diện"
+                      onImageSelected={setFieldValue}
+                    />
+                  </Col>
+                </Col>
+              </Row>
+
+              <Button variant="primary" type="submit" disabled={isSubmitting}>
+                Lưu lại
+              </Button>
             </Form>
           )}
         </Formik>

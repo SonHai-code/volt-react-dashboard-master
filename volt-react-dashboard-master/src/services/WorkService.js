@@ -7,3 +7,6 @@ export const getDetailWorkingShifts = (userId) =>
 
 export const getOverallWorkingShift = (params) =>
   axios.get(REST_API_BASE_URL + "/get-work-overalls", { params });
+
+export const getDetailWorkingShiftByEmployeeCode = (params) =>
+  axios.get(REST_API_BASE_URL + "/get-work-details/code", { params });

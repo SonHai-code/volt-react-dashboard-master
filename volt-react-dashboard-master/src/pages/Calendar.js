@@ -7,7 +7,7 @@ import { listDepartmentNames } from "../services/DepartmentService";
 
 export default () => {
   const [data, setData] = useState([]);
-  const [name, setName] = useState("");
+  const [name, setName] = useState("Design team");
 
   const retrieveData = async () => {
     try {
@@ -36,7 +36,7 @@ export default () => {
               Quản lý lịch làm việc phòng ban
             </Breadcrumb.Item>
           </Breadcrumb>
-          <h4>Lịch làm việc phòng ban </h4>
+          {name && <h4>Lịch làm việc phòng ban - {name} </h4>}
         </div>
       </div>
 
@@ -46,10 +46,9 @@ export default () => {
             <Form.Group id="department">
               <Form.Select
                 name="department"
-                defaultValue="null"
                 onChange={(e) => setName(e.target.value)}
               >
-                <option value="">Chọn phòng ban</option>
+                <option disabled>Chọn phòng ban</option>
 
                 {data.map((opt) => (
                   <option value={opt}>{opt}</option>
@@ -76,15 +75,16 @@ export default () => {
       {name ? (
         <Calendars name={name} />
       ) : (
-        // <Calendars name={name} />
-        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+        <div
+          className="container-fluid d-flex justify-content-center align-items-center"
+          style={{ height: "50vh" }}
+        >
+          {/* Your content goes here */}
           <p className="text-sm">
             Vui lòng lựa chọn phòng ban để xem lịch làm việc
           </p>
         </div>
       )}
-      {/* <ShiftTable />
-      <DepartmentTable /> */}
     </>
   );
 };

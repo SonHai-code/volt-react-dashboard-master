@@ -18,16 +18,17 @@ import {
 } from "@themesberg/react-bootstrap";
 
 import { DetailWorkingShiftTable } from "../components/Tables";
-import { getDetailWorkingShifts } from "../services/WorkService";
+import { Link } from "react-router-dom";
+import { Routes } from "../routes";
 
-export default ({ userId }) => {
+export default () => {
   const [search, setSearch] = useState("");
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const [size, setSize] = useState(10);
 
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
 
   const pageSizes = [5, 10, 15];
 
@@ -50,14 +51,14 @@ export default ({ userId }) => {
   //   }
   // };
 
-  useEffect(() => {
-    async function fetchData() {
-      let response = await getDetailWorkingShifts(13);
-      console.log(response.data);
-      setData(response.data);
-    }
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     let response = await getDetailWorkingShifts(13);
+  //     console.log(response.data);
+  //     setData(response.data);
+  //   }
+  //   fetchData();
+  // }, []);
 
   return (
     <>
@@ -71,14 +72,17 @@ export default ({ userId }) => {
               <FontAwesomeIcon icon={faHome} />
             </Breadcrumb.Item>
             <Breadcrumb.Item>App</Breadcrumb.Item>
+            <Breadcrumb.Item
+              active
+              as={Link}
+              to={Routes.GeneralWorkingShifts.path}
+            >
+              Tổng hợp công
+            </Breadcrumb.Item>
             <Breadcrumb.Item active>Chi tiết công</Breadcrumb.Item>
           </Breadcrumb>
 
-          {data.at(0) && (
-            <h4>
-              {data.at(0).username} - {data.at(0).employeeCode}
-            </h4>
-          )}
+          <h4>Chi tiết công</h4>
         </div>
         <div className="btn-toolbar mb-2 mb-md-0">
           <ButtonGroup>
@@ -150,8 +154,7 @@ export default ({ userId }) => {
           </Col>
         </Row>
       </div>
-      <p>Bảng DetailWorkingShifts</p>
-      <DetailWorkingShiftTable size={size} searchTitle={search} data={data} />
+      <DetailWorkingShiftTable size={size} searchTitle={search} />
     </>
   );
 };
