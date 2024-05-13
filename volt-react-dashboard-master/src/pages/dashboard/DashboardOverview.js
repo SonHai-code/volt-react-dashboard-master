@@ -1,10 +1,34 @@
-
 import React from "react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCashRegister, faChartLine, faCloudUploadAlt, faPlus, faRocket, faTasks, faUserShield } from '@fortawesome/free-solid-svg-icons';
-import { Col, Row, Button, Dropdown, ButtonGroup } from '@themesberg/react-bootstrap';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCashRegister,
+  faChartLine,
+  faCloudUploadAlt,
+  faPlus,
+  faRocket,
+  faTasks,
+  faUserShield,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  Col,
+  Row,
+  Button,
+  Dropdown,
+  ButtonGroup,
+} from "@themesberg/react-bootstrap";
 
-import { CounterWidget, CircleChartWidget, BarChartWidget, TeamMembersWidget, ProgressTrackWidget, RankingWidget, SalesValueWidget, SalesValueWidgetPhone, AcquisitionWidget } from "../../components/Widgets";
+import {
+  CounterWidget,
+  CircleChartWidget,
+  BarChartWidget,
+  TeamMembersWidget,
+  ProgressTrackWidget,
+  RankingWidget,
+  SalesValueWidget,
+  SalesValueWidgetPhone,
+  AcquisitionWidget,
+  WorkComplitationWidget,
+} from "../../components/Widgets";
 import { PageVisitsTable } from "../../components/Tables";
 import { trafficShares, totalOrders } from "../../data/charts";
 
@@ -12,54 +36,76 @@ export default () => {
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+        {/* New task button */}
         <Dropdown className="btn-toolbar">
-          <Dropdown.Toggle as={Button} variant="primary" size="sm" className="me-2">
-            <FontAwesomeIcon icon={faPlus} className="me-2" />New Task
+          <Dropdown.Toggle
+            as={Button}
+            variant="primary"
+            size="sm"
+            className="me-2"
+          >
+            <FontAwesomeIcon icon={faPlus} className="me-2" />
+            New Task
           </Dropdown.Toggle>
           <Dropdown.Menu className="dashboard-dropdown dropdown-menu-left mt-2">
             <Dropdown.Item className="fw-bold">
               <FontAwesomeIcon icon={faTasks} className="me-2" /> New Task
             </Dropdown.Item>
             <Dropdown.Item className="fw-bold">
-              <FontAwesomeIcon icon={faCloudUploadAlt} className="me-2" /> Upload Files
+              <FontAwesomeIcon icon={faCloudUploadAlt} className="me-2" />{" "}
+              Upload Files
             </Dropdown.Item>
             <Dropdown.Item className="fw-bold">
-              <FontAwesomeIcon icon={faUserShield} className="me-2" /> Preview Security
+              <FontAwesomeIcon icon={faUserShield} className="me-2" /> Preview
+              Security
             </Dropdown.Item>
 
             <Dropdown.Divider />
 
             <Dropdown.Item className="fw-bold">
-              <FontAwesomeIcon icon={faRocket} className="text-danger me-2" /> Upgrade to Pro
+              <FontAwesomeIcon icon={faRocket} className="text-danger me-2" />{" "}
+              Upgrade to Pro
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
 
+        {/*Share and Export Buttons*/}
         <ButtonGroup>
-          <Button variant="outline-primary" size="sm">Share</Button>
-          <Button variant="outline-primary" size="sm">Export</Button>
+          <Button variant="outline-primary" size="sm">
+            Chia sẻ
+          </Button>
+          <Button variant="outline-primary" size="sm">
+            Xuất
+          </Button>
         </ButtonGroup>
       </div>
 
       <Row className="justify-content-md-center">
         <Col xs={12} className="mb-4 d-none d-sm-block">
-          <SalesValueWidget
-            title="Sales Value"
-            value="10,567"
+          {/* <SalesValueWidget
+            title="Biểu đồ theo dõi tổng số giờ công của nhân viên theo ngày"
+            value="10,5"
+            percentage={10.57}
+          /> */}
+          <WorkComplitationWidget
+            title="Biểu đồ theo dõi tổng số giờ công của nhân viên theo ngày"
+            value="10,5"
             percentage={10.57}
           />
         </Col>
-        <Col xs={12} className="mb-4 d-sm-none">
+
+        {/* <Col xs={12} className="mb-4 d-sm-none">
           <SalesValueWidgetPhone
             title="Sales Value"
             value="10,567"
             percentage={10.57}
           />
-        </Col>
+        </Col> */}
+
         <Col xs={12} sm={6} xl={4} className="mb-4">
           <CounterWidget
-            category="Customers"
-            title="345k"
+            category="Phòng ban Back-end team"
+            title="345 giờ"
             period="Feb 1 - Apr 1"
             percentage={18.2}
             icon={faChartLine}
@@ -69,8 +115,8 @@ export default () => {
 
         <Col xs={12} sm={6} xl={4} className="mb-4">
           <CounterWidget
-            category="Revenue"
-            title="$43,594"
+            category="Nhân viên X"
+            title="43,594 giờ"
             period="Feb 1 - Apr 1"
             percentage={28.4}
             icon={faCashRegister}
@@ -80,8 +126,9 @@ export default () => {
 
         <Col xs={12} sm={6} xl={4} className="mb-4">
           <CircleChartWidget
-            title="Traffic Share"
-            data={trafficShares} />
+            title="Tỉ lệ làm việc hiệu quả"
+            data={trafficShares}
+          />
         </Col>
       </Row>
 
@@ -111,7 +158,8 @@ export default () => {
                     title="Total orders"
                     value={452}
                     percentage={18.2}
-                    data={totalOrders} />
+                    data={totalOrders}
+                  />
                 </Col>
 
                 <Col xs={12} className="px-0 mb-4">

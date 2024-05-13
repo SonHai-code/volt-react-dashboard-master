@@ -33,6 +33,7 @@ import {
   BarChart,
   SalesValueChart,
   SalesValueChartphone,
+  WorkComplitationValueChart,
 } from "./Charts";
 
 import Profile1 from "../assets/img/team/profile-picture-1.jpg";
@@ -497,6 +498,7 @@ export const RankingWidget = () => {
 
 export const SalesValueWidget = (props) => {
   const { title, value, percentage } = props;
+
   const percentageIcon = percentage < 0 ? faAngleDown : faAngleUp;
   const percentageColor = percentage < 0 ? "text-danger" : "text-success";
 
@@ -504,28 +506,85 @@ export const SalesValueWidget = (props) => {
     <Card className="bg-secondary-alt shadow-sm">
       <Card.Header className="d-flex flex-row align-items-center flex-0">
         <div className="d-block">
-          <h5 className="fw-normal mb-2">{title}</h5>
-          <h3>${value}</h3>
+          <h5
+            className="fw-bold 
+          text-uppercase 
+          text-center 
+          mb-2 
+          d-flex justify-content-center"
+          >
+            {title}
+          </h5>
+
+          <h3>{value} giờ công</h3>
           <small className="fw-bold mt-2">
-            <span className="me-2">Yesterday</span>
+            <span className="me-2">So với ngày hôm qua</span>
             <FontAwesomeIcon
               icon={percentageIcon}
               className={`${percentageColor} me-1`}
             />
+
             <span className={percentageColor}>{percentage}%</span>
           </small>
         </div>
         <div className="d-flex ms-auto">
           <Button variant="secondary" size="sm" className="me-2">
-            Month
+            Tháng
           </Button>
           <Button variant="primary" size="sm" className="me-3">
-            Week
+            Tuần
           </Button>
         </div>
       </Card.Header>
       <Card.Body className="p-2">
         <SalesValueChart />
+      </Card.Body>
+    </Card>
+  );
+};
+
+export const WorkComplitationWidget = (props) => {
+  const { title, value, percentage } = props;
+
+  const percentageIcon = percentage < 0 ? faAngleDown : faAngleUp;
+  const percentageColor = percentage < 0 ? "text-danger" : "text-success";
+
+  return (
+    <Card className="bg-secondary-alt shadow-sm">
+      <Card.Header className="d-flex flex-row align-items-center flex-0">
+        <div className="d-block">
+          <h5
+            className="fw-bold 
+          text-uppercase 
+          text-center 
+          mb-2 
+          d-flex justify-content-center"
+          >
+            {title}
+          </h5>
+
+          <h3>{value} giờ công</h3>
+          <small className="fw-bold mt-2">
+            <span className="me-2">So với ngày hôm qua</span>
+            <FontAwesomeIcon
+              icon={percentageIcon}
+              className={`${percentageColor} me-1`}
+            />
+
+            <span className={percentageColor}>{percentage}%</span>
+          </small>
+        </div>
+        <div className="d-flex ms-auto">
+          <Button variant="secondary" size="sm" className="me-2">
+            Tháng
+          </Button>
+          <Button variant="primary" size="sm" className="me-3">
+            Tuần
+          </Button>
+        </div>
+      </Card.Header>
+      <Card.Body className="p-2">
+        <WorkComplitationValueChart />
       </Card.Body>
     </Card>
   );
@@ -553,10 +612,10 @@ export const SalesValueWidgetPhone = (props) => {
         </div>
         <div className="d-flex ms-auto">
           <Button variant="secondary" size="sm" className="me-2">
-            Month
+            Tháng
           </Button>
           <Button variant="primary" size="sm" className="me-3">
-            Week
+            Tuần
           </Button>
         </div>
       </Card.Header>

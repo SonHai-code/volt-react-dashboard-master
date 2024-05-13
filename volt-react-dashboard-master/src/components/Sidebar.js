@@ -194,7 +194,7 @@ export default (props = {}) => {
               />
 
               <NavItem
-                title="Overview"
+                title="Tổng quan"
                 link={Routes.DashboardOverview.path}
                 icon={faChartPie}
               />
@@ -282,7 +282,7 @@ export default (props = {}) => {
                 link={Routes.Settings.path}
               />
 
-              <CollapsableNavItem
+              {/* <CollapsableNavItem
                 eventKey="tables/"
                 title="Tables"
                 icon={faTable}
@@ -291,9 +291,9 @@ export default (props = {}) => {
                   title="Bootstrap Table"
                   link={Routes.BootstrapTables.path}
                 />
-              </CollapsableNavItem>
+              </CollapsableNavItem> */}
 
-              <CollapsableNavItem
+              {/* <CollapsableNavItem
                 eventKey="examples/"
                 title="Page Examples"
                 icon={faFileAlt}
@@ -314,11 +314,11 @@ export default (props = {}) => {
                   title="500 Server Error"
                   link={Routes.ServerError.path}
                 />
-              </CollapsableNavItem>
+              </CollapsableNavItem> */}
 
               <Dropdown.Divider className="my-3 border-indigo" />
 
-              <CollapsableNavItem
+              {/* <CollapsableNavItem
                 eventKey="documentation/"
                 title="Getting Started"
                 icon={faBook}
@@ -336,8 +336,9 @@ export default (props = {}) => {
                 />
                 <NavItem title="Build Tools" link={Routes.DocsBuild.path} />
                 <NavItem title="Changelog" link={Routes.DocsChangelog.path} />
-              </CollapsableNavItem>
-              <CollapsableNavItem
+              </CollapsableNavItem> */}
+
+              {/* <CollapsableNavItem
                 eventKey="components/"
                 title="Components"
                 icon={faBoxOpen}
@@ -366,7 +367,7 @@ export default (props = {}) => {
                 <NavItem title="Tabs" link={Routes.Tabs.path} />
                 <NavItem title="Toasts" link={Routes.Toasts.path} />
                 <NavItem title="Tooltips" link={Routes.Tooltips.path} />
-              </CollapsableNavItem>
+              </CollapsableNavItem> */}
             </Nav>
           </div>
         </SimpleBar>
