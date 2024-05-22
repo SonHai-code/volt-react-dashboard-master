@@ -78,7 +78,7 @@ export default () => {
               </InputGroup.Text>
               <Form.Control
                 type="text"
-                placeholder="Search by Name"
+                placeholder="Tìm kiếm theo tên nhân viên"
                 onChange={onChangeSearchPersonName}
                 value={search}
                 name="search"
@@ -127,9 +127,8 @@ export default () => {
           </Col>
         </Row>
       </div>
-
+1
       <CheckInLogTable searchTitle={search} size={size} />
-      {/* <ShiftTable searchTitle={search} size={size} /> */}
     </>
   );
 };

@@ -1823,7 +1823,7 @@ export const GeneralWorkingShiftTable = ({
                 <th className="border-bottom">Không chấm công</th>
                 {/* <th className="border-bottom">Nghỉ phép</th>
               <th className="border-bottom">Nghỉ không lương</th> */}
-                <th className="border-bottom">Action</th>
+                <th className="border-bottom">Tác vụ</th>
               </tr>
             </thead>
 
